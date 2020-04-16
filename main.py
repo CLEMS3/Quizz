@@ -6,12 +6,6 @@ import pygame
 import csv
 import os
 
-# if the module isn't installed in the user's computer, it install it + importation of the module
-try:
-    import soundex
-except ModuleNotFoundError:
-    os.system("pip install soundex")
-    import soundex
 
 # window initialization
 pygame.init()
