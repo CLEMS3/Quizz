@@ -3,57 +3,37 @@
 
 def soundex(word):
     word = word.upper()
-    word_li = [i for i in word]
-    word_li_origin = list(word_li)
-    i = 0
-    while i <= len(word_li):
-        print(i)
-        if word_li_origin[i] == word_li_origin[i - 1]:
-            del word_li[i]
-            i-=1
-        print(word_li)
-        try:
-            if word_li_origin[i] == word_li_origin[i + 1]:
-                del word_li[i + 1]
-                i -= 1
-        except IndexError:
-            pass
-        print(word_li)
-        if i != 0:
-            if word_li[i] == "A" or word_li[i] == "E" or word_li[i] == "H" or word_li[i] == "I" or word_li[i] == "O" or word_li[i] == "U" or word_li[i] == "W" or word_li[i] == "Y" or word_li[i] == " ":
-                del word_li[i]
-                i -= 1
-            elif word_li[i] == "B" or word_li[i] == "P":
-                word_li[i] = "1"
-            elif word_li[i] == "C" or word_li[i] == "K" or word_li[i] == "Q":
-                word_li[i] = "2"
-            elif word_li[i] == "D" or word_li[i] == "T":
-                word_li[i] = "3"
-            elif word_li[i] == "L":
-                word_li[i] = "4"
-            elif word_li[i] == "M" or word_li[i] == "N":
-                word_li[i] = "5"
-            elif word_li[i] == "R":
-                word_li[i] = "6"
-            elif word_li[i] == "G" or word_li[i] == "J":
-                word_li[i] = "7"
-            elif word_li[i] == "X" or word_li[i] == "Z" or word_li[i] == "S":
-                word_li[i] = "8"
-            elif word_li[i] == "F" or word_li[i] == "V":
-                word_li[i] = "9"
-            print(word_li)
-        i += 1
-
-    soundex_code = []
-    for i in range(0, 4):
-        try:
-            soundex_code.append(word_li[i])
-        except IndexError:
-            pass
-        if len(soundex_code)<4:
-            soundex_code.append("0")
-
-    return soundex_code
+    word_li = [i for i in word if i!=" "]
+    word_li_2 = []
+    for i in range(len(word_li)):
+        if ((not word_li[i] in ["A", "E", "H", "I", "O", "U", "W", "Y"]) or i == 0):
+            word_li_2.append(word_li[i])
+    c = 0
+    for i in word_li_2:
+        c+=1
+        if not c == 1:
+            if i in ["B", "P"]:
+                word_li_2[word_li_2.index(i)] = "1"
+            elif i in ["C", "K", "Q"]:
+                word_li_2[word_li_2.index(i)] = "2"
+            elif i in ["T", "D"]:
+                word_li_2[word_li_2.index(i)] = "3"
+            elif i in ["L"]:
+                word_li_2[word_li_2.index(i)] = "4"
+            elif i in ["M", "N"]:
+                word_li_2[word_li_2.index(i)] = "5"
+            elif i in ["R"]:
+                word_li_2[word_li_2.index(i)] = "6"
+            elif i in ["G", "J"]:
+                word_li_2[word_li_2.index(i)] = "7"
+            elif i in ["X", "Y", "Z"]:
+                word_li_2[word_li_2.index(i)] = "8"
+            elif i in ["F", "V"]:
+                word_li_2[word_li_2.index(i)] = "9"
 
 
-print(soundex(" b"))
+    return word_li_2
+
+
+print(soundex("Rupert"))
+#[" ", "A", "E", "H", "I", "O", "U", "W", "Y"]
