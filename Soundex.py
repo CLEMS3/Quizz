@@ -10,21 +10,20 @@ def soundex(word):
         print(i)
         if word_li_origin[i] == word_li_origin[i - 1]:
             del word_li[i]
+            i-=1
         print(word_li)
         try:
             if word_li_origin[i] == word_li_origin[i + 1]:
                 del word_li[i + 1]
+                i -= 1
         except IndexError:
             pass
         print(word_li)
-        if word_li[i] == " ":
-            del word_li[i]
-        print(word_li)
         if i != 0:
-            if word_li[i] == "A" or word_li[i] == "E" or word_li[i] == "H" or word_li[i] == "I" or word_li[i] == "O" or word_li[i] == "U" or word_li[i] == "W" or word_li[i] == "Y":
+            if word_li[i] == "A" or word_li[i] == "E" or word_li[i] == "H" or word_li[i] == "I" or word_li[i] == "O" or word_li[i] == "U" or word_li[i] == "W" or word_li[i] == "Y" or word_li[i] == " ":
                 del word_li[i]
-            print(word_li)
-            if word_li[i] == "B" or word_li[i] == "P":
+                i -= 1
+            elif word_li[i] == "B" or word_li[i] == "P":
                 word_li[i] = "1"
             elif word_li[i] == "C" or word_li[i] == "K" or word_li[i] == "Q":
                 word_li[i] = "2"
@@ -50,10 +49,11 @@ def soundex(word):
         try:
             soundex_code.append(word_li[i])
         except IndexError:
-            soundex_code.append(0)
-
+            pass
+        if len(soundex_code)<4:
+            soundex_code.append("0")
 
     return soundex_code
 
 
-print(soundex("bonjour"))
+print(soundex(" b"))
