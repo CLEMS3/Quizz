@@ -3,7 +3,7 @@
 
 def soundex(word):
     word = word.upper()
-    word_li = [i for i in word if i != " "]
+    word_li = [i for i in word if i not in [" ", "H", "W"]]
     word_li_ = []
     count = 0
     for i in word_li:
@@ -14,7 +14,7 @@ def soundex(word):
 
     word_li_2 = []
     for i in range(len(word_li_)):
-        if (not word_li_[i] in ["A", "E", "H", "I", "O", "U", "W", "Y"]) or i == 0:
+        if (not word_li_[i] in ["A", "E", "I", "O", "U", "Y"]) or i == 0:
             word_li_2.append(word_li_[i])
     c = 0
     for i in word_li_2:
@@ -47,4 +47,4 @@ def soundex(word):
 
 
 print(soundex("Ankara"))
-print(soundex("anccara"))
+print(soundex("aanccawharra"))
