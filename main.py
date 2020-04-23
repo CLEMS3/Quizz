@@ -84,9 +84,40 @@ while _continue:
                 user_view = 3
 
         elif user_view == 3:
+            Ingame_score = 0
             for j in range (len(questions_answer)):
                 win.blit(general_bg, (0, 0))
-                question_display = text_font.render(str(questions_answer[j][0]), 0, (0,0,0))
+                question_display = text_font.render(str(questions_answer[j][0]), True, (0, 0, 0))
                 win.blit(question_display, (100, 100))
+                text = ""
+                end_writing = False
+                x = 200
+                y = 300
+                input_box = pygame.Rect(x, y, 600, 70)
+                active = True
+                text = ''
+                while not end_writing:
+                    for event in pygame.event.get():
+                        if event.type == pygame.KEYDOWN:
+                            if event.key == pygame.K_RETURN:
+                                print(text)
+                                end_writing = True
+                            elif event.key == pygame.K_BACKSPACE:
+                                text = text[:-1]
+                            elif len(text) < 12:
+                                text += event.unicode
+
+                    # Blit the input_box rect.
+                    pygame.draw.rect(win, (255, 255, 255), input_box)
+                    # Render the current text.
+                    txt_surface = text_font.render(text, True, (0, 0, 0))
+                    # Blit the text.
+                    win.blit(txt_surface, (x + 5, y + 5))
+                    pygame.display.flip()
+                if Soundex.soundex(text) == Soundex.soundex(str(questions_answer[j][1])):
+                    Ingame_score += 1
+                print(Ingame_score)
+
+
 
     pygame.display.flip()
