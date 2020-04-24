@@ -87,8 +87,19 @@ while _continue:
             Ingame_score = 0
             for j in range (len(questions_answer)):
                 win.blit(general_bg, (0, 0))
-                question_display = text_font.render(str(questions_answer[j][0]), True, (0, 0, 0))
-                win.blit(question_display, (100, 100))
+                question = str(questions_answer[j][0])
+                question_splited = question.split(" ")
+                if len(question) > 28:
+                    question_part_1 = question_splited[:int(len(question_splited)/2)]
+                    question_part_2 = question_splited[int(len(question_splited) / 2):]
+                else :
+                    question_part_1 = question_splited
+                    print(question_part_1)
+                    question_part_2 = ""
+                question_display_1 = text_font.render(' '.join(question_part_1), True, (0, 0, 0))
+                win.blit(question_display_1, (100, 100))
+                question_display_2 = text_font.render(' '.join(question_part_2), True, (0, 0, 0))
+                win.blit(question_display_2, (100, 150))
                 text = ""
                 end_writing = False
                 x = 200
@@ -117,7 +128,7 @@ while _continue:
                 if Soundex.soundex(text) == Soundex.soundex(str(questions_answer[j][1])):
                     Ingame_score += 1
                 print(Ingame_score)
-
+            user_view = 1
 
 
     pygame.display.flip()
