@@ -8,6 +8,7 @@ import csv
 import os
 import Soundex
 import random
+import time
 
 # window initialization
 pygame.init()
@@ -59,10 +60,13 @@ user_view = 1
 _continue = True
 while _continue:
     for i in pygame.event.get():
-        key = pygame.key.get_pressed()
-        if key[pygame.K_ESCAPE] or i.type == pygame.QUIT:
-            pygame.quit()
-            os.sys.exit(0)
+        #key = pygame.key.get_pressed()
+        if (i.type == pygame.KEYUP and pygame.K_ESCAPE) or i.type == pygame.QUIT:
+            if user_view == 1:
+                pygame.quit()
+                os.sys.exit(0)
+            else:
+                user_view = 1
         if user_view == 1:
             background = win.blit(bg_main_menu_img, (0, 0))
             scores_b = win.blit(tr_img, (30, 22))
@@ -88,6 +92,7 @@ while _continue:
             for j in range (len(questions_answer)):
                 win.blit(general_bg, (0, 0))
                 question = str(questions_answer[j][0])
+                # mise en forme du texte - améliorable pour gerer plus de ligne
                 question_splited = question.split(" ")
                 if len(question) > 28:
                     question_part_1 = question_splited[:int(len(question_splited)/2)]
@@ -100,6 +105,7 @@ while _continue:
                 win.blit(question_display_1, (100, 100))
                 question_display_2 = text_font.render(' '.join(question_part_2), True, (0, 0, 0))
                 win.blit(question_display_2, (100, 150))
+                # fin de la mise en forme du texte
                 text = ""
                 end_writing = False
                 x = 200
