@@ -54,13 +54,43 @@ pygame.display.set_caption("E-quizz")
 # font setting
 text_font = pygame.font.Font("ARLRDBD.TTF", 50)
 
+
+# text formatting
+
+def text_formatting(text):
+    question_splited = text.split(" ")
+    if len(text) < 28:
+        win.blit(text_font.render(' '.join(question_splited), True, (0, 0, 0)), (190, 100))
+        print("if")
+    else:
+        print("else")
+        len_count = 0
+        line_li = []
+        text_ord = 100
+        for k in question_splited:
+            len_count += len(k)
+            print(len_count)
+            line_li.append(k)
+            print(line_li)
+            if len_count > 17:
+                print(len_count)
+                len_count = 0
+                txt = text_font.render(' '.join(line_li), True, (0, 0, 0))
+                win.blit(txt, (190, text_ord))
+                line_li = []
+                text_ord += 50
+        print(len_count)
+        txt = text_font.render(' '.join(line_li), True, (0, 0, 0))
+        win.blit(txt, (190, text_ord))
+
+
 # main loop
 user_view = 1
 
 _continue = True
 while _continue:
     for i in pygame.event.get():
-        #key = pygame.key.get_pressed()
+        # key = pygame.key.get_pressed()
         if (i.type == pygame.KEYUP and pygame.K_ESCAPE) or i.type == pygame.QUIT:
             if user_view == 1:
                 pygame.quit()
@@ -75,7 +105,8 @@ while _continue:
             settings_b = win.blit(settings_img, (300, 22))
             play_b = win.blit(play_button, (300, 250))
 
-            if play_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
+            if play_b.collidepoint(
+                    pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
                 user_view = 2
         elif user_view == 2:
 
@@ -89,27 +120,16 @@ while _continue:
 
         elif user_view == 3:
             Ingame_score = 0
-            for j in range (len(questions_answer)):
+            for j in range(len(questions_answer)):
                 win.blit(general_bg, (0, 0))
                 question = str(questions_answer[j][0])
                 # mise en forme du texte - améliorable pour gerer plus de ligne
-                question_splited = question.split(" ")
-                if len(question) > 28:
-                    question_part_1 = question_splited[:int(len(question_splited)/2)]
-                    question_part_2 = question_splited[int(len(question_splited) / 2):]
-                else :
-                    question_part_1 = question_splited
-                    print(question_part_1)
-                    question_part_2 = ""
-                question_display_1 = text_font.render(' '.join(question_part_1), True, (0, 0, 0))
-                win.blit(question_display_1, (100, 100))
-                question_display_2 = text_font.render(' '.join(question_part_2), True, (0, 0, 0))
-                win.blit(question_display_2, (100, 150))
+                text_formatting(question)
                 # fin de la mise en forme du texte
                 text = ""
                 end_writing = False
                 x = 200
-                y = 300
+                y = 350
                 input_box = pygame.Rect(x, y, 600, 70)
                 active = True
                 text = ''
@@ -135,6 +155,5 @@ while _continue:
                     Ingame_score += 1
                 print(Ingame_score)
             user_view = 1
-
 
     pygame.display.flip()
