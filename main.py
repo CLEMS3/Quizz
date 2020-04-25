@@ -18,7 +18,7 @@ os.environ['SDL_VIDEO_CENTERED'] = str(1)
 importation = lambda image_name: pygame.image.load(str(image_name))
 conv_icone_size = lambda image: pygame.transform.scale(image, (50, 50))
 
-lang = "fr"
+lang = "en"
 bg_main_menu_img = importation("src/menu_bg.png")
 tr_img = conv_icone_size(importation("src/Trophy.png"))
 stat_img = conv_icone_size(importation("src/Statistics.png"))
@@ -42,8 +42,8 @@ else:
 
 # csv file importation / creating question list
 
-file = open('quizz.csv', encoding='utf-8')
-questions_answer = [i for i in csv.reader(file, delimiter=";") if i != ['questions', 'reponses']]
+file = open('quizz_fr.csv' if lang == "fr" else 'quizz_en.csv', encoding='utf-8')
+questions_answer = [i for i in csv.reader(file, delimiter=";") if i != ['questions', 'reponses'] and i != ['questions', 'answers']]
 file.close()
 random.shuffle(questions_answer)
 
@@ -61,25 +61,19 @@ def text_formatting(text):
     question_splited = text.split(" ")
     if len(text) < 28:
         win.blit(text_font.render(' '.join(question_splited), True, (0, 0, 0)), (190, 100))
-        print("if")
     else:
-        print("else")
         len_count = 0
         line_li = []
         text_ord = 100
         for k in question_splited:
             len_count += len(k)
-            print(len_count)
             line_li.append(k)
-            print(line_li)
             if len_count > 17:
-                print(len_count)
                 len_count = 0
                 txt = text_font.render(' '.join(line_li), True, (0, 0, 0))
                 win.blit(txt, (190, text_ord))
                 line_li = []
                 text_ord += 50
-        print(len_count)
         txt = text_font.render(' '.join(line_li), True, (0, 0, 0))
         win.blit(txt, (190, text_ord))
 
@@ -90,11 +84,12 @@ user_view = 1
 _continue = True
 while _continue:
     for i in pygame.event.get():
-        # key = pygame.key.get_pressed()
-        if (i.type == pygame.KEYUP and pygame.K_ESCAPE) or i.type == pygame.QUIT:
+        if (i.type == pygame.KEYDOWN and i.key == pygame.K_ESCAPE ) or i.type == pygame.QUIT:
             if user_view == 1:
+                print("exit")
                 pygame.quit()
                 os.sys.exit(0)
+
             else:
                 user_view = 1
         if user_view == 1:
@@ -153,7 +148,7 @@ while _continue:
                     pygame.display.flip()
                 if Soundex.soundex(text) == Soundex.soundex(str(questions_answer[j][1])):
                     Ingame_score += 1
-                print(Ingame_score)
+                print("score : ",Ingame_score)
             user_view = 1
 
     pygame.display.flip()
