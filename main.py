@@ -30,6 +30,8 @@ stat_img = conv_icone_size(importation("src/Statistics.png"))
 lang_img = conv_icone_size(importation("src/Language.png"))
 settings_img = conv_icone_size(importation("src/Settings.png"))
 general_bg = importation("src/bg.png")
+fr_img = pygame.transform.scale(importation("src/French_flag.png"), (75, 75))
+en_img = pygame.transform.scale(importation("src/US_flag.png"), (75, 75))
 
 if lang == "fr":
     play_button = importation("src/fr-buttons/play_button.png")
@@ -136,6 +138,9 @@ while _continue:
             if play_b.collidepoint(
                     pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
                 user_view = 2
+            elif lang_b.collidepoint(
+                    pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
+                user_view = 6
         elif user_view == 2:
 
             background = win.blit(general_bg, (0, 0))
@@ -160,5 +165,14 @@ while _continue:
                     Ingame_score += 1
                 print("score : ",Ingame_score)
             user_view = 1
+
+        elif user_view == 6:
+            background = win.blit(general_bg, (0,0))
+            fr_b = win.blit(fr_img, (300, 150))
+            fr_text_ = text_font.render("Français" if lang == "fr" else "French", True, (0, 0, 0))
+            fr_text = win.blit(fr_text_, (400, 160))
+            en_b = win.blit(en_img, (300, 300))
+            en_text_ = text_font.render("Anglais" if lang == "fr" else "English", True, (0, 0, 0))
+            en_text = win.blit(en_text_, (400, 310))
 
     pygame.display.flip()
