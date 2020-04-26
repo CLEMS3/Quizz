@@ -2,7 +2,9 @@
 # main file of the project
 
 # language definition
-lang = "en"
+file = open('lang.txt', 'r')
+lang = str(file.read())
+file.close()
 
 # importation of modules
 
@@ -15,7 +17,6 @@ if lang == "fr":
     from Soundex_fr import *
 elif lang == "en":
     from Soundex_en import *
-
 # window initialization
 pygame.init()
 os.environ['SDL_VIDEO_CENTERED'] = str(1)
@@ -174,5 +175,23 @@ while _continue:
             en_b = win.blit(en_img, (300, 300))
             en_text_ = text_font.render("Anglais" if lang == "fr" else "English", True, (0, 0, 0))
             en_text = win.blit(en_text_, (400, 310))
+
+            if fr_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
+                lang = "fr"
+                file = open('lang.txt', 'w')
+                file.write("fr")
+                file.close()
+            elif en_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
+                lang = "en"
+                file = open('lang.txt', 'w')
+                file.write("en")
+                file.close()
+
+            if lang == "fr":
+                highlight = pygame.Rect(290, 140, 330, 100)
+                pygame.draw.rect(win, (0, 0, 0), highlight, 5)
+            elif lang == "en":
+                highlight = pygame.Rect(290, 290, 330, 100)
+                pygame.draw.rect(win, (0, 0, 0), highlight, 5)
 
     pygame.display.flip()
