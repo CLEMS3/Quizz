@@ -1,14 +1,20 @@
 # Clément Chapard - QuizzNsi
 # main file of the project
 
+# language definition
+lang = "en"
+
 # importation of modules
 
 import pygame
 import csv
 import os
-import Soundex
 import random
 import time
+if lang == "fr":
+    from Soundex_fr import *
+elif lang == "en":
+    from Soundex_en import *
 
 # window initialization
 pygame.init()
@@ -18,7 +24,6 @@ os.environ['SDL_VIDEO_CENTERED'] = str(1)
 importation = lambda image_name: pygame.image.load(str(image_name))
 conv_icone_size = lambda image: pygame.transform.scale(image, (50, 50))
 
-lang = "en"
 bg_main_menu_img = importation("src/menu_bg.png")
 tr_img = conv_icone_size(importation("src/Trophy.png"))
 stat_img = conv_icone_size(importation("src/Statistics.png"))
@@ -77,6 +82,34 @@ def text_formatting(text):
         txt = text_font.render(' '.join(line_li), True, (0, 0, 0))
         win.blit(txt, (190, text_ord))
 
+# input box
+
+def input_box(text):
+    end_writing = False
+    x = 200
+    y = 350
+    input_box = pygame.Rect(x, y, 600, 70)
+    active = True
+    while not end_writing:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    print(text)
+                    end_writing = True
+                elif event.key == pygame.K_BACKSPACE:
+                    text = text[:-1]
+                elif len(text) < 12:
+                    text += event.unicode
+
+        # Blit the input_box rect.
+        pygame.draw.rect(win, (255, 255, 255), input_box)
+        # Render the current text.
+        txt_surface = text_font.render(text, True, (0, 0, 0))
+        # Blit the text.
+        win.blit(txt_surface, (x + 5, y + 5))
+        pygame.display.flip()
+    return text
+
 
 # main loop
 user_view = 1
@@ -121,32 +154,9 @@ while _continue:
                 # mise en forme du texte - améliorable pour gerer plus de ligne
                 text_formatting(question)
                 # fin de la mise en forme du texte
-                text = ""
-                end_writing = False
-                x = 200
-                y = 350
-                input_box = pygame.Rect(x, y, 600, 70)
-                active = True
                 text = ''
-                while not end_writing:
-                    for event in pygame.event.get():
-                        if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_RETURN:
-                                print(text)
-                                end_writing = True
-                            elif event.key == pygame.K_BACKSPACE:
-                                text = text[:-1]
-                            elif len(text) < 12:
-                                text += event.unicode
-
-                    # Blit the input_box rect.
-                    pygame.draw.rect(win, (255, 255, 255), input_box)
-                    # Render the current text.
-                    txt_surface = text_font.render(text, True, (0, 0, 0))
-                    # Blit the text.
-                    win.blit(txt_surface, (x + 5, y + 5))
-                    pygame.display.flip()
-                if Soundex.soundex(text) == Soundex.soundex(str(questions_answer[j][1])):
+                text = input_box(text)
+                if soundex(text) == soundex(str(questions_answer[j][1])):
                     Ingame_score += 1
                 print("score : ",Ingame_score)
             user_view = 1

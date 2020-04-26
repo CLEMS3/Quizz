@@ -45,6 +45,3 @@ def soundex(word):
 
     return word_li_2
 
-
-print(soundex("Ankara"))
-print(soundex("aanccawharra"))
