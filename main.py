@@ -65,25 +65,24 @@ text_font = pygame.font.Font("ARLRDBD.TTF", 50)
 
 # text formatting
 
-def text_formatting(text):
+def text_formatting(text, text_ord, text_abs):
     question_splited = text.split(" ")
     if len(text) < 28:
         win.blit(text_font.render(' '.join(question_splited), True, (0, 0, 0)), (190, 100))
     else:
         len_count = 0
         line_li = []
-        text_ord = 100
         for k in question_splited:
             len_count += len(k)
             line_li.append(k)
             if len_count > 17:
                 len_count = 0
                 txt = text_font.render(' '.join(line_li), True, (0, 0, 0))
-                win.blit(txt, (190, text_ord))
+                win.blit(txt, (text_abs, text_ord))
                 line_li = []
                 text_ord += 50
         txt = text_font.render(' '.join(line_li), True, (0, 0, 0))
-        win.blit(txt, (190, text_ord))
+        win.blit(txt, (text_abs, text_ord))
 
 # input box
 
@@ -101,6 +100,8 @@ def input_box(text):
                     end_writing = True
                 elif event.key == pygame.K_BACKSPACE:
                     text = text[:-1]
+                elif event.key == pygame.K_ESCAPE:
+                    text += ''
                 elif len(text) < 12:
                     text += event.unicode
 
@@ -120,14 +121,23 @@ user_view = 1
 _continue = True
 while _continue:
     for i in pygame.event.get():
-        if (i.type == pygame.KEYDOWN and i.key == pygame.K_ESCAPE ) or i.type == pygame.QUIT:
+        if (i.type == pygame.KEYDOWN and i.key == pygame.K_ESCAPE ):
             if user_view == 1:
                 print("exit")
                 pygame.quit()
                 os.sys.exit(0)
 
             else:
-                user_view = 1
+                if user_view in [2, 6]:
+                    user_view = 1
+                elif user_view in [3]:
+                    user_view = 2
+        elif i.type == pygame.QUIT:
+            print("exit")
+            pygame.quit()
+            os.sys.exit(0)
+
+        # main menu
         if user_view == 1:
             background = win.blit(bg_main_menu_img, (0, 0))
             scores_b = win.blit(tr_img, (30, 22))
@@ -142,6 +152,8 @@ while _continue:
             elif lang_b.collidepoint(
                     pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
                 user_view = 6
+
+        # gamemode choice
         elif user_view == 2:
 
             background = win.blit(general_bg, (0, 0))
@@ -152,13 +164,13 @@ while _continue:
             if normal_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
                 user_view = 3
 
+        # normal mode
         elif user_view == 3:
             Ingame_score = 0
             for j in range(len(questions_answer)):
                 win.blit(general_bg, (0, 0))
                 question = str(questions_answer[j][0])
-                # mise en forme du texte - améliorable pour gerer plus de ligne
-                text_formatting(question)
+                text_formatting(question, 100, 190)
                 # fin de la mise en forme du texte
                 text = ''
                 text = input_box(text)
@@ -166,7 +178,22 @@ while _continue:
                     Ingame_score += 1
                 print("score : ",Ingame_score)
             user_view = 1
+        elif user_view == 4:
+            Ingame_score = 0
+            for j in range(len(questions_answer)):
+                win.blit(general_bg, (0, 0))
+                question = str(questions_answer[j][0])
+                text_formatting(question, 100, 190)
+                # fin de la mise en forme du texte
+                text = ''
+                text = input_box(text)
+                next_ = False
+                while not next_:
+                    pass
+                if soundex(text) == soundex(str(questions_answer[j][1])):
+                    Ingame_score += 1
 
+        # language choice
         elif user_view == 6:
             background = win.blit(general_bg, (0,0))
             fr_b = win.blit(fr_img, (300, 150))
@@ -175,7 +202,7 @@ while _continue:
             en_b = win.blit(en_img, (300, 300))
             en_text_ = text_font.render("Anglais" if lang == "fr" else "English", True, (0, 0, 0))
             en_text = win.blit(en_text_, (400, 310))
-
+            text_formatting("/!\ rédémarage nécessaire pour appliquer le changement de langue" if lang == "fr" else "/!\ restart the program to apply modifications", 400, 50)
             if fr_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
                 lang = "fr"
                 file = open('lang.txt', 'w')
@@ -193,5 +220,6 @@ while _continue:
             elif lang == "en":
                 highlight = pygame.Rect(290, 290, 330, 100)
                 pygame.draw.rect(win, (0, 0, 0), highlight, 5)
+
 
     pygame.display.flip()
