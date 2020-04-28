@@ -51,9 +51,18 @@ else:
 # csv file importation / creating question list
 
 file = open('quizz_fr.csv' if lang == "fr" else 'quizz_en.csv', encoding='utf-8')
-questions_answer = [i for i in csv.reader(file, delimiter=";") if i != ['questions', 'reponses'] and i != ['questions', 'answers']]
+questions_answer_ = [i for i in csv.reader(file, delimiter=";") if i != ['questions', 'reponses'] and i != ['questions', 'answers']]
 file.close()
+questions_answer = list(questions_answer_)
 random.shuffle(questions_answer)
+
+# csv file importation / adding knowledge mode res
+
+file = open('knowledge-res_fr.csv' if lang == "fr" else 'knowledge-res_en.csv', encoding='utf-8')
+knowledge_data = [i for i in csv.reader(file, delimiter=";")]
+file.close()
+
+
 
 # window setting
 win = pygame.display.set_mode((1000, 600))
@@ -163,6 +172,8 @@ while _continue:
 
             if normal_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
                 user_view = 3
+            elif knowledge_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
+                user_view = 4
 
         # normal mode
         elif user_view == 3:
@@ -177,21 +188,24 @@ while _continue:
                 if soundex(text) == soundex(str(questions_answer[j][1])):
                     Ingame_score += 1
                 print("score : ",Ingame_score)
+            random.shuffle(questions_answer)
             user_view = 1
         elif user_view == 4:
             Ingame_score = 0
-            for j in range(len(questions_answer)):
+            for j in range(len(questions_answer_)):
                 win.blit(general_bg, (0, 0))
-                question = str(questions_answer[j][0])
+                question = str(questions_answer_[j][0])
                 text_formatting(question, 100, 190)
                 # fin de la mise en forme du texte
                 text = ''
                 text = input_box(text)
-                next_ = False
-                while not next_:
-                    pass
-                if soundex(text) == soundex(str(questions_answer[j][1])):
+                if soundex(text) == soundex(str(questions_answer_[j][1])):
                     Ingame_score += 1
+                win.blit(general_bg, (0,0))
+                win.blit(importation(knowledge_data[questions_answer_.index(questions_answer[j])-1][0]), (0,0))
+                print("score : ", Ingame_score)
+            random.shuffle(questions_answer)
+            user_view = 1
 
         # language choice
         elif user_view == 6:
@@ -203,6 +217,7 @@ while _continue:
             en_text_ = text_font.render("Anglais" if lang == "fr" else "English", True, (0, 0, 0))
             en_text = win.blit(en_text_, (400, 310))
             text_formatting("/!\ rédémarage nécessaire pour appliquer le changement de langue" if lang == "fr" else "/!\ restart the program to apply modifications", 400, 50)
+
             if fr_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
                 lang = "fr"
                 file = open('lang.txt', 'w')
