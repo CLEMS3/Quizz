@@ -61,7 +61,8 @@ random.shuffle(questions_answer)
 file = open('knowledge-res_fr.csv' if lang == "fr" else 'knowledge-res_en.csv', encoding='utf-8')
 knowledge_data = [i for i in csv.reader(file, delimiter=";")]
 file.close()
-
+for i in range (len(knowledge_data)):
+    knowledge_data[i][0] = importation(knowledge_data[i][0])
 
 
 # window setting
@@ -70,27 +71,28 @@ pygame.display.set_caption("E-quizz")
 
 # font setting
 text_font = pygame.font.Font("ARLRDBD.TTF", 50)
+small_text_font = pygame.font.Font("ARLRDBD.TTF", 25)
 
 
 # text formatting
 
-def text_formatting(text, text_ord, text_abs):
+def text_formatting(text, text_ord, text_abs, line_size, choosen_font):
     question_splited = text.split(" ")
     if len(text) < 28:
-        win.blit(text_font.render(' '.join(question_splited), True, (0, 0, 0)), (190, 100))
+        win.blit(choosen_font.render(' '.join(question_splited), True, (0, 0, 0)), (190, 100))
     else:
         len_count = 0
         line_li = []
         for k in question_splited:
             len_count += len(k)
             line_li.append(k)
-            if len_count > 17:
+            if len_count > line_size:
                 len_count = 0
-                txt = text_font.render(' '.join(line_li), True, (0, 0, 0))
+                txt = choosen_font.render(' '.join(line_li), True, (0, 0, 0))
                 win.blit(txt, (text_abs, text_ord))
                 line_li = []
                 text_ord += 50
-        txt = text_font.render(' '.join(line_li), True, (0, 0, 0))
+        txt = choosen_font.render(' '.join(line_li), True, (0, 0, 0))
         win.blit(txt, (text_abs, text_ord))
 
 # input box
@@ -105,7 +107,6 @@ def input_box(text):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    print(text)
                     end_writing = True
                 elif event.key == pygame.K_BACKSPACE:
                     text = text[:-1]
@@ -123,6 +124,19 @@ def input_box(text):
         pygame.display.flip()
     return text
 
+# calculating points
+tot_pts = []
+
+def points(li):
+    coef = 1
+    tot = 0
+    for i in li :
+        if i == 1:
+            tot += i*coef
+            coef += 0.1
+        else:
+            coef -= 0.1
+    return tot
 
 # main loop
 user_view = 1
@@ -181,30 +195,72 @@ while _continue:
             for j in range(len(questions_answer)):
                 win.blit(general_bg, (0, 0))
                 question = str(questions_answer[j][0])
-                text_formatting(question, 100, 190)
+                text_formatting(question, 100, 190, 17, text_font)
                 # fin de la mise en forme du texte
                 text = ''
                 text = input_box(text)
                 if soundex(text) == soundex(str(questions_answer[j][1])):
                     Ingame_score += 1
-                print("score : ",Ingame_score)
+                    tot_pts.append(1)
+                else:
+                    tot_pts.append(0)
+
+            showScore = True
+            while showScore:
+                for k in pygame.event.get():
+                    win.blit(general_bg, (0, 0))
+                    txt_score = text_font.render("Score : {}/{}".format(Ingame_score, len(questions_answer_)), True,
+                                                 (0, 0, 0))
+                    win.blit(txt_score, (100, 100))
+                    txt_points = text_font.render("Points : {}".format(points(tot_pts)), True, (0, 0, 0))
+                    win.blit(txt_points, (100, 150))
+                    pygame.display.flip()
+                    if k.type == pygame.KEYDOWN:
+                        showScore = False
+
             random.shuffle(questions_answer)
             user_view = 1
+
+        # Knowledge mode
         elif user_view == 4:
             Ingame_score = 0
             for j in range(len(questions_answer_)):
                 win.blit(general_bg, (0, 0))
                 question = str(questions_answer_[j][0])
-                text_formatting(question, 100, 190)
+                text_formatting(question, 100, 190, 17, text_font)
                 # fin de la mise en forme du texte
                 text = ''
                 text = input_box(text)
+
                 if soundex(text) == soundex(str(questions_answer_[j][1])):
                     Ingame_score += 1
-                win.blit(general_bg, (0,0))
-                win.blit(importation(knowledge_data[questions_answer_.index(questions_answer[j])-1][0]), (0,0))
-                print("score : ", Ingame_score)
-            random.shuffle(questions_answer)
+                    tot_pts.append(1)
+                else:
+                    tot_pts.append(0)
+
+                showKnowledge = True
+                while showKnowledge:
+                    for k in pygame.event.get():
+                        win.blit(general_bg, (0,0))
+                        win.blit(knowledge_data[j][0], (50,50))
+                        text_formatting(knowledge_data[j][1], 50, 400, 30, small_text_font)
+                        pygame.display.flip()
+                        if k.type == pygame.KEYDOWN:
+                            showKnowledge = False
+            showScore = True
+            while showScore:
+                for k in pygame.event.get():
+                    win.blit(general_bg, (0, 0))
+                    txt_score = text_font.render("Score : {}/{}".format(Ingame_score, len(questions_answer_)), True, (0, 0, 0))
+                    win.blit(txt_score, (100, 100))
+                    txt_points = text_font.render("Points : {}".format(points(tot_pts)), True,(0, 0, 0))
+                    win.blit(txt_points, (100, 150))
+                    pygame.display.flip()
+                    if k.type == pygame.KEYDOWN:
+                        showScore = False
+
+            #random.shuffle(questions_answer)
+            tot_pts = []
             user_view = 1
 
         # language choice
@@ -216,7 +272,7 @@ while _continue:
             en_b = win.blit(en_img, (300, 300))
             en_text_ = text_font.render("Anglais" if lang == "fr" else "English", True, (0, 0, 0))
             en_text = win.blit(en_text_, (400, 310))
-            text_formatting("/!\ rédémarage nécessaire pour appliquer le changement de langue" if lang == "fr" else "/!\ restart the program to apply modifications", 400, 50)
+            text_formatting("/!\ rédémarage nécessaire pour appliquer le changement de langue" if lang == "fr" else "/!\ restart the program to apply modifications", 400, 50, 17, text_font)
 
             if fr_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
                 lang = "fr"
