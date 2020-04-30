@@ -4,3 +4,4 @@ Language.png : https://www.flaticon.com/authors/smashicons
 French_flag.png : https://www.flaticon.com/authors/freepik
 US_flag.png : https://www.flaticon.com/authors/freepik
 Statistics.png : https://www.flaticon.com/authors/fjstudio
+chrono.png : https://www.flaticon.com/authors/fjstudio
