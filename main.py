@@ -118,6 +118,11 @@ def input_box(text, mode=None, t0=None):
                     text += ''
                 elif len(text) < 12:
                     text += event.unicode
+            elif event.type == pygame.QUIT:
+                print("exit")
+                pygame.quit()
+                os.sys.exit(0)
+
         if mode == 5:
             if time.time() - t0 >= 5:
                 text = ""
@@ -141,17 +146,31 @@ def input_box(text, mode=None, t0=None):
 tot_pts = []
 
 
-def points(li, mode=None, tps=None ):
+def points(li, mode, tps=None):
     coef = 1
     tot = 0
+    score = 0
     for i in li:
         if i == 1:
             tot += i * coef
             coef += 0.1
+            score += 1
         else:
             coef -= 0.1
     if mode == 5:
-        tot *= (tps/(len(questions_answer)*2.5))
+        tot *= (tps / (len(questions_answer) * 2.5))
+        with open("s_score.txt", "a+") as file:
+            file.write("{},{}\n".format(tot, score))
+        file.close()
+    elif mode == 4:
+        with open("k_score.txt", "a+") as file:
+            file.write("{},{}\n".format(tot, score))
+        file.close()
+    elif mode == 3:
+        with open("n_score.txt", "a+") as file:
+            file.write("{},{}\n".format(tot, score))
+        file.close()
+    print(mode)
     tot = round(tot, 1)
     return tot
 
@@ -159,8 +178,7 @@ def points(li, mode=None, tps=None ):
 # main loop
 user_view = 1
 
-_continue = True
-while _continue:
+while True:
     for i in pygame.event.get():
         if (i.type == pygame.KEYDOWN and i.key == pygame.K_ESCAPE):
             if user_view == 1:
@@ -169,7 +187,7 @@ while _continue:
                 os.sys.exit(0)
 
             else:
-                if user_view in [2, 6]:
+                if user_view in [2, 6, 7]:
                     user_view = 1
                 elif user_view in [3]:
                     user_view = 2
@@ -193,6 +211,9 @@ while _continue:
             elif lang_b.collidepoint(
                     pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
                 user_view = 6
+            elif scores_b.collidepoint(
+                    pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
+                user_view = 7
 
         # gamemode choice
         elif user_view == 2:
@@ -226,13 +247,14 @@ while _continue:
                     tot_pts.append(0)
 
             showScore = True
+            pts = points(tot_pts, user_view)
             while showScore:
                 for k in pygame.event.get():
                     win.blit(general_bg, (0, 0))
                     txt_score = text_font.render("Score : {}/{}".format(Ingame_score, len(questions_answer_)), True,
                                                  (0, 0, 0))
                     win.blit(txt_score, (100, 100))
-                    txt_points = text_font.render("Points : {}".format(points(tot_pts)), True, (0, 0, 0))
+                    txt_points = text_font.render("Points : {}".format(pts), True, (0, 0, 0))
                     win.blit(txt_points, (100, 150))
                     pygame.display.flip()
                     if k.type == pygame.KEYDOWN:
@@ -268,13 +290,14 @@ while _continue:
                         if k.type == pygame.KEYDOWN:
                             showKnowledge = False
             showScore = True
+            pts = points(tot_pts, user_view)
             while showScore:
                 for k in pygame.event.get():
                     win.blit(general_bg, (0, 0))
                     txt_score = text_font.render("Score : {}/{}".format(Ingame_score, len(questions_answer_)), True,
                                                  (0, 0, 0))
                     win.blit(txt_score, (100, 100))
-                    txt_points = text_font.render("Points : {}".format(points(tot_pts)), True, (0, 0, 0))
+                    txt_points = text_font.render("Points : {}".format(pts), True, (0, 0, 0))
                     win.blit(txt_points, (100, 150))
                     pygame.display.flip()
                     if k.type == pygame.KEYDOWN:
@@ -305,13 +328,15 @@ while _continue:
 
             tps_tot = round(time.time() - tps_tot, 3)
             showScore = True
+            pts = points(tot_pts, mode=user_view, tps=tps_tot)
             while showScore:
                 for k in pygame.event.get():
                     win.blit(general_bg, (0, 0))
                     txt_score = text_font.render("Score : {}/{}".format(Ingame_score, len(questions_answer_)), True,
                                                  (0, 0, 0))
                     win.blit(txt_score, (100, 100))
-                    txt_points = text_font.render("Points : {}".format(points(tot_pts), mode=user_view, tps=tps_tot), True, (0, 0, 0))
+                    txt_points = text_font.render("Points : {}".format(pts),
+                                                  True, (0, 0, 0))
                     win.blit(txt_points, (100, 150))
                     pygame.display.flip()
                     if k.type == pygame.KEYDOWN:
@@ -322,7 +347,7 @@ while _continue:
             user_view = 1
 
 
-        # language choice
+        # Language choice
         elif user_view == 6:
             background = win.blit(general_bg, (0, 0))
             fr_b = win.blit(fr_img, (300, 150))
@@ -354,5 +379,7 @@ while _continue:
             elif lang == "en":
                 highlight = pygame.Rect(290, 290, 330, 100)
                 pygame.draw.rect(win, (0, 0, 0), highlight, 5)
+        elif user_view == 7:
+            background = win.blit(general_bg, (0, 0)) # dedicated bg to create
 
     pygame.display.flip()
