@@ -5,6 +5,7 @@
 file = open('lang.txt', 'r')
 lang = str(file.read())
 file.close()
+_lang = lang
 
 # importation of modules
 
@@ -13,6 +14,8 @@ import csv
 import os
 import random
 import time
+import statistics as stat
+import datetime
 
 if lang == "fr":
     from Soundex_fr import *
@@ -44,6 +47,7 @@ if lang == "fr":
     normal_button = importation("src/fr-buttons/normal_button.png")
     speed_button = importation("src/fr-buttons/speed_button.png")
     score_bg = importation("src/fr-buttons/scores_bg.png")
+    stat_bg = importation("src/fr-buttons/stats_bg.png")
 
 else:
     play_button = importation("src/en-buttons/play_button.png")
@@ -51,6 +55,7 @@ else:
     normal_button = importation("src/en-buttons/normal_button.png")
     speed_button = importation("src/en-buttons/speed_button.png")
     score_bg = importation("src/en-buttons/scores_bg.png")
+    stat_bg = importation("src/en-buttons/stats_bg.png")
 
 # end of images importation
 
@@ -199,7 +204,7 @@ while True:
                 os.sys.exit(0)
 
             else:
-                if user_view in [2, 6, 7]:
+                if user_view in [2, 6, 7, 8]:
                     user_view = 1
                 elif user_view in [3]:
                     user_view = 2
@@ -226,6 +231,9 @@ while True:
             elif scores_b.collidepoint(
                     pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
                 user_view = 7
+            elif stat_b.collidepoint(
+                    pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
+                user_view = 8
 
         # gamemode choice
         elif user_view == 2:
@@ -277,6 +285,7 @@ while True:
 
         # Knowledge mode
         elif user_view == 4:
+            file.close()
             Ingame_score = 0
             for j in range(len(questions_answer_)):
                 win.blit(general_bg, (0, 0))
@@ -322,6 +331,7 @@ while True:
 
         # Speed mode
         elif user_view == 5:
+            file.close()
             tps_tot = time.time()
             Ingame_score = 0
             for j in range(len(questions_answer)):
@@ -391,6 +401,8 @@ while True:
             elif lang == "en":
                 highlight = pygame.Rect(290, 290, 330, 100)
                 pygame.draw.rect(win, (0, 0, 0), highlight, 5)
+
+        # Score
         elif user_view == 7:
             background = win.blit(score_bg, (0, 0))
             with open("k_score.txt") as file:
@@ -409,5 +421,56 @@ while True:
             score_display(n_score_li, 365)
             score_display(s_score_li, 665)
 
+        # Stats
+        elif user_view == 8:
+            background = win.blit(stat_bg, (0, 0))
+            with open("k_score.txt") as file:
+                k_score_li = file.readlines()
+                file.close()
+            with open("n_score.txt") as file:
+                n_score_li = file.readlines()
+                file.close()
+            with open("s_score.txt") as file:
+                s_score_li = file.readlines()
+                file.close()
+            for i in [k_score_li, n_score_li, s_score_li]:
+                i.sort()
+                i.reverse()
+            tot_nb_game = medium_text_font.render(str(len(k_score_li) + len(n_score_li) + len(s_score_li)), True, (255, 255, 255))
+            win.blit(tot_nb_game, (200, 90))
+            nb_k_game = medium_text_font.render(str(len(k_score_li)), True, (255, 255, 255))
+            win.blit(nb_k_game, (200, 190))
+            nb_n_game = medium_text_font.render(str(len(n_score_li)), True, (255, 255, 255))
+            win.blit(nb_n_game, (220 if _lang == "fr" else 200, 290))
+            nb_s_game = medium_text_font.render(str(len(s_score_li)), True, (255, 255, 255))
+            win.blit(nb_s_game, (200, 390))
+            if _lang == "fr":
+                fav_gamemode = medium_text_font.render("Culture" if len(k_score_li) > len(n_score_li) and len(k_score_li) > len(s_score_li) else ("Normal" if len(n_score_li) > len(s_score_li) else "Vitesse"), True, (255, 255, 255))
+            elif _lang == "en":
+                fav_gamemode = medium_text_font.render("Knowledge" if len(k_score_li) > len(n_score_li) and len(k_score_li) > len(s_score_li) else ("Normal" if len(n_score_li) > len(s_score_li) else "Speed"), True, (255, 255, 255))
+            win.blit(fav_gamemode, (100, 490))
+            k_pts_li = [float(i.split(" ")[0]) for i in k_score_li]
+            n_pts_li = [float(i.split(" ")[0]) for i in n_score_li]
+            s_pts_li = [float(i.split(" ")[0]) for i in s_score_li]
+            pts_mean = medium_text_font.render(str(round(stat.mean(k_pts_li + n_pts_li + s_pts_li), 2)), True, (255, 255, 255))
+            win.blit(pts_mean, (440, 90))
+            n_pts_mean = medium_text_font.render(str(round(stat.mean(n_pts_li), 2)), True, (255, 255, 255))
+            win.blit(n_pts_mean, (500, 190))
+            k_pts_mean = medium_text_font.render(str(round(stat.mean(k_pts_li), 2)), True, (255, 255, 255))
+            win.blit(k_pts_mean, (500 if _lang == "fr" else 540, 290))
+            s_pts_mean = medium_text_font.render(str(round(stat.mean(s_pts_li), 2)), True, (255, 255, 255))
+            win.blit(s_pts_mean, (500, 390))
+            k_scr_li = [float((i.split(",")[1]).split("/")[1]) for i in k_score_li]
+            n_scr_li = [float((i.split(",")[1]).split("/")[1]) for i in n_score_li]
+            s_scr_li = [float((i.split(",")[1]).split("/")[1]) for i in s_score_li]
+            scr_mean = medium_text_font.render(str(round(stat.mean(k_scr_li + n_scr_li + s_scr_li), 2)), True,(255, 255, 255))
+            win.blit(scr_mean, (740, 90))
+            n_scr_mean = medium_text_font.render(str(round(stat.mean(n_scr_li), 2)), True, (255, 255, 255))
+            win.blit(n_scr_mean, (800, 190))
+            k_scr_mean = medium_text_font.render(str(round(stat.mean(k_scr_li), 2)), True, (255, 255, 255))
+            win.blit(k_scr_mean, (800 if _lang == "fr" else 840, 290))
+            s_scr_mean = medium_text_font.render(str(round(stat.mean(s_scr_li), 2)), True, (255, 255, 255))
+            win.blit(s_scr_mean, (800, 390))
+            # dates des parties à completer + debuger quand fichier vide
 
     pygame.display.flip()
