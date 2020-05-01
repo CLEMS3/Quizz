@@ -22,9 +22,10 @@ elif lang == "en":
 # window initialization
 pygame.init()
 os.environ['SDL_VIDEO_CENTERED'] = str(1)
+win = pygame.display.set_mode((1000, 600))
 
 # images importation
-importation = lambda image_name: pygame.image.load(str(image_name))
+importation = lambda image_name: pygame.image.load(str(image_name)).convert_alpha()
 conv_icone_size = lambda image: pygame.transform.scale(image, (50, 50))
 
 bg_main_menu_img = importation("src/menu_bg.png")
@@ -42,12 +43,14 @@ if lang == "fr":
     knowledge_button = importation("src/fr-buttons/knowledge_button.png")
     normal_button = importation("src/fr-buttons/normal_button.png")
     speed_button = importation("src/fr-buttons/speed_button.png")
+    score_bg = importation("src/fr-buttons/scores_bg.png")
 
 else:
     play_button = importation("src/en-buttons/play_button.png")
     knowledge_button = importation("src/en-buttons/knowledge_button.png")
     normal_button = importation("src/en-buttons/normal_button.png")
     speed_button = importation("src/en-buttons/speed_button.png")
+    score_bg = importation("src/en-buttons/scores_bg.png")
 
 # end of images importation
 
@@ -69,12 +72,13 @@ for i in range(len(knowledge_data)):
     knowledge_data[i][0] = importation(knowledge_data[i][0])
 
 # window setting
-win = pygame.display.set_mode((1000, 600))
+
 pygame.display.set_caption("E-quizz")
 
 # font setting
 text_font = pygame.font.Font("ARLRDBD.TTF", 50)
 small_text_font = pygame.font.Font("ARLRDBD.TTF", 25)
+medium_text_font = pygame.font.Font("ARLRDBD.TTF", 40)
 
 
 # text formatting
@@ -160,19 +164,27 @@ def points(li, mode, tps=None):
     if mode == 5:
         tot *= (tps / (len(questions_answer) * 2.5))
         with open("s_score.txt", "a+") as file:
-            file.write("{},{}\n".format(tot, score))
+            file.write("{} pts,{}/{}\n".format(round(tot, 2), score, len(questions_answer)))
         file.close()
     elif mode == 4:
         with open("k_score.txt", "a+") as file:
-            file.write("{},{}\n".format(tot, score))
+            file.write("{} pts,{}/{}\n".format(round(tot, 2), score, len(questions_answer)))
         file.close()
     elif mode == 3:
         with open("n_score.txt", "a+") as file:
-            file.write("{},{}\n".format(tot, score))
+            file.write("{} pts,{}/{}\n".format(round(tot, 2), score, len(questions_answer)))
         file.close()
     print(mode)
     tot = round(tot, 1)
     return tot
+
+def score_display(li, column_abs):
+    for i in range(0,3):
+        try:
+            s = medium_text_font.render(li[i][:-1], True, (255, 255, 255))
+        except IndexError:
+            s = text_font.render("          /", True, (255, 255, 255))
+        win.blit(s, (column_abs, 210+i*125))
 
 
 # main loop
@@ -380,6 +392,22 @@ while True:
                 highlight = pygame.Rect(290, 290, 330, 100)
                 pygame.draw.rect(win, (0, 0, 0), highlight, 5)
         elif user_view == 7:
-            background = win.blit(general_bg, (0, 0)) # dedicated bg to create
+            background = win.blit(score_bg, (0, 0))
+            with open("k_score.txt") as file:
+                k_score_li = file.readlines()
+                file.close()
+            with open("n_score.txt") as file:
+                n_score_li = file.readlines()
+                file.close()
+            with open("s_score.txt") as file:
+                s_score_li = file.readlines()
+                file.close()
+            for i in [k_score_li, n_score_li, s_score_li]:
+                i.sort()
+                i.reverse()
+            score_display(k_score_li, 65)
+            score_display(n_score_li, 365)
+            score_display(s_score_li, 665)
+
 
     pygame.display.flip()
