@@ -252,6 +252,10 @@ while True:
 
         # normal mode
         elif user_view == 3:
+            date = datetime.datetime.now()
+            with open("time_record", "a+") as file:
+                file.write("{},{},{},{},{},{}\n".format(date.year, date.month, date.day, date.hour, date.minute, date.second))
+            file.close()
             Ingame_score = 0
             for j in range(len(questions_answer)):
                 win.blit(general_bg, (0, 0))
@@ -285,6 +289,10 @@ while True:
 
         # Knowledge mode
         elif user_view == 4:
+            date = datetime.datetime.now()
+            with open("time_record", "a+") as file:
+                file.write(
+                    "{},{},{},{},{},{}\n".format(date.year, date.month, date.day, date.hour, date.minute, date.second))
             file.close()
             Ingame_score = 0
             for j in range(len(questions_answer_)):
@@ -331,6 +339,10 @@ while True:
 
         # Speed mode
         elif user_view == 5:
+            date = datetime.datetime.now()
+            with open("time_record", "a+") as file:
+                file.write(
+                    "{},{},{},{},{},{}\n".format(date.year, date.month, date.day, date.hour, date.minute, date.second))
             file.close()
             tps_tot = time.time()
             Ingame_score = 0
@@ -472,5 +484,14 @@ while True:
             s_scr_mean = medium_text_font.render(str(round(stat.mean(s_scr_li), 2)), True, (255, 255, 255))
             win.blit(s_scr_mean, (800, 390))
             # dates des parties à completer + debuger quand fichier vide
+            with open("time_record") as file:
+                game_time = file.readlines()
+                file.close()
+            game_time = [((i[:-1]).split(",")) for i in game_time]
+            for i in range(len(game_time)):
+                game_time_ = "".join(game_time[i])
+            print(game_time_)
+
+
 
     pygame.display.flip()
