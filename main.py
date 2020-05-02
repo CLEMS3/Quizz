@@ -154,6 +154,10 @@ def input_box(text, mode=None, t0=None):
 # calculating points
 tot_pts = []
 
+# animation count
+
+a=0
+
 
 def points(li, mode, tps=None):
     coef = 1
@@ -196,6 +200,16 @@ def score_display(li, column_abs):
 user_view = 1
 
 while True:
+    if a < 1:
+        bg_rect = pygame.Rect(0, 0, 1000, 600)
+        pygame.draw.rect(win, (0, 0, 0), bg_rect)
+        intro_txt = text_font.render("Clément Chapard", True, (255, 255, 255))
+        win.blit(intro_txt, (300, 275))
+        pygame.draw.line(win, (255, 255, 255), (500, 0), (1000 * a, 500 * a), 10)
+        pygame.draw.line(win, (255, 255, 255), (500, 0), (0 * a, 500 * a), 10)
+        pygame.draw.line(win, (255, 255, 255), (500, 600), (0 * a, 100 * a), 10)
+        pygame.draw.line(win, (255, 255, 255), (500, 600), (1000 * a, 100 * a), 10)
+        a += 0.001
     for i in pygame.event.get():
         if (i.type == pygame.KEYDOWN and i.key == pygame.K_ESCAPE):
             if user_view == 1:
@@ -214,13 +228,14 @@ while True:
             os.sys.exit(0)
 
         # main menu
-        if user_view == 1:
+        elif user_view == 1:
             background = win.blit(bg_main_menu_img, (0, 0))
             scores_b = win.blit(tr_img, (30, 22))
             stat_b = win.blit(stat_img, (120, 22))
             lang_b = win.blit(lang_img, (210, 22))
             settings_b = win.blit(settings_img, (300, 22))
             play_b = win.blit(play_button, (300, 250))
+
 
             if play_b.collidepoint(
                     pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
