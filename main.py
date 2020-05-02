@@ -252,8 +252,8 @@ while True:
 
         # normal mode
         elif user_view == 3:
-            date = datetime.datetime.now()
             with open("time_record", "a+") as file:
+                date = datetime.datetime.now()
                 file.write("{},{},{},{},{},{}\n".format(date.year, date.month, date.day, date.hour, date.minute, date.second))
             file.close()
             Ingame_score = 0
@@ -289,8 +289,8 @@ while True:
 
         # Knowledge mode
         elif user_view == 4:
-            date = datetime.datetime.now()
             with open("time_record", "a+") as file:
+                date = datetime.datetime.now()
                 file.write(
                     "{},{},{},{},{},{}\n".format(date.year, date.month, date.day, date.hour, date.minute, date.second))
             file.close()
@@ -339,8 +339,8 @@ while True:
 
         # Speed mode
         elif user_view == 5:
-            date = datetime.datetime.now()
             with open("time_record", "a+") as file:
+                date = datetime.datetime.now()
                 file.write(
                     "{},{},{},{},{},{}\n".format(date.year, date.month, date.day, date.hour, date.minute, date.second))
             file.close()
@@ -487,10 +487,14 @@ while True:
             with open("time_record") as file:
                 game_time = file.readlines()
                 file.close()
-            game_time = [((i[:-1]).split(",")) for i in game_time]
-            for i in range(len(game_time)):
-                game_time_ = "".join(game_time[i])
-            print(game_time_)
+            game_time = [i[:-1].split(",") for i in game_time]
+            game_time.sort()
+            first_game = small_text_font.render("{}/{}/{} {} {}h{}m{}s".format(game_time[0][0], game_time[0][1], game_time[0][2], "à" if _lang == "fr" else "at", game_time[0][3], game_time[0][4], game_time[0][5]), True, (255, 255, 255))
+            win.blit(first_game, (370, 500))
+            last_game = small_text_font.render(
+                "{}/{}/{} {} {}h{}m{}s".format(game_time[-1][0], game_time[-1][1], game_time[-1][2], "à" if _lang == "fr" else "at", game_time[-1][3], game_time[-1][4], game_time[-1][5]), True, (255, 255, 255))
+            win.blit(last_game, (670, 500))
+
 
 
 
