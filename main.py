@@ -436,15 +436,36 @@ while True:
         # Stats
         elif user_view == 8:
             background = win.blit(stat_bg, (0, 0))
-            with open("k_score.txt") as file:
-                k_score_li = file.readlines()
-                file.close()
-            with open("n_score.txt") as file:
-                n_score_li = file.readlines()
-                file.close()
-            with open("s_score.txt") as file:
-                s_score_li = file.readlines()
-                file.close()
+            try:
+                with open("k_score.txt") as file:
+                    k_score_li = file.readlines()
+                    file.close()
+            except FileNotFoundError:
+                with open("k_score.txt", "w") as file:
+                    file.close()
+                with open("k_score.txt") as file:
+                    k_score_li = file.readlines()
+                    file.close()
+            try:
+                with open("n_score.txt") as file:
+                    n_score_li = file.readlines()
+                    file.close()
+            except FileNotFoundError:
+                with open("n_score.txt", "w") as file:
+                    file.close()
+                with open("n_score.txt") as file:
+                    n_score_li = file.readlines()
+                    file.close()
+            try:
+                with open("s_score.txt") as file:
+                    s_score_li = file.readlines()
+                    file.close()
+            except FileNotFoundError:
+                with open("s_score.txt", "w") as file:
+                    file.close()
+                with open("s_score.txt") as file:
+                    s_score_li = file.readlines()
+                    file.close()
             for i in [k_score_li, n_score_li, s_score_li]:
                 i.sort()
                 i.reverse()
@@ -464,37 +485,43 @@ while True:
             k_pts_li = [float(i.split(" ")[0]) for i in k_score_li]
             n_pts_li = [float(i.split(" ")[0]) for i in n_score_li]
             s_pts_li = [float(i.split(" ")[0]) for i in s_score_li]
-            pts_mean = medium_text_font.render(str(round(stat.mean(k_pts_li + n_pts_li + s_pts_li), 2)), True, (255, 255, 255))
+            pts_mean = medium_text_font.render(str(round(stat.mean(k_pts_li + n_pts_li + s_pts_li), 2)) if len(k_pts_li + n_pts_li + s_pts_li) > 0 else "/", True, (255, 255, 255))
             win.blit(pts_mean, (440, 90))
-            n_pts_mean = medium_text_font.render(str(round(stat.mean(n_pts_li), 2)), True, (255, 255, 255))
+            n_pts_mean = medium_text_font.render(str(round(stat.mean(n_pts_li), 2))if len(n_pts_li) > 0 else "/", True, (255, 255, 255))
             win.blit(n_pts_mean, (500, 190))
-            k_pts_mean = medium_text_font.render(str(round(stat.mean(k_pts_li), 2)), True, (255, 255, 255))
-            win.blit(k_pts_mean, (500 if _lang == "fr" else 540, 290))
-            s_pts_mean = medium_text_font.render(str(round(stat.mean(s_pts_li), 2)), True, (255, 255, 255))
+            k_pts_mean = medium_text_font.render(str(round(stat.mean(k_pts_li), 2))if len(k_pts_li) > 0 else "/", True, (255, 255, 255))
+            win.blit(k_pts_mean, (500 if _lang == "fr" else 560, 290))
+            s_pts_mean = medium_text_font.render(str(round(stat.mean(s_pts_li), 2))if len(s_pts_li) > 0 else "/", True, (255, 255, 255))
             win.blit(s_pts_mean, (500, 390))
             k_scr_li = [float((i.split(",")[1]).split("/")[1]) for i in k_score_li]
             n_scr_li = [float((i.split(",")[1]).split("/")[1]) for i in n_score_li]
             s_scr_li = [float((i.split(",")[1]).split("/")[1]) for i in s_score_li]
-            scr_mean = medium_text_font.render(str(round(stat.mean(k_scr_li + n_scr_li + s_scr_li), 2)), True,(255, 255, 255))
+            scr_mean = medium_text_font.render(str(round(stat.mean(k_scr_li + n_scr_li + s_scr_li), 2))if len(k_pts_li + n_pts_li + s_pts_li) > 0 else "/", True,(255, 255, 255))
             win.blit(scr_mean, (740, 90))
-            n_scr_mean = medium_text_font.render(str(round(stat.mean(n_scr_li), 2)), True, (255, 255, 255))
+            n_scr_mean = medium_text_font.render(str(round(stat.mean(n_scr_li), 2))if len(n_pts_li) > 0 else "/", True, (255, 255, 255))
             win.blit(n_scr_mean, (800, 190))
-            k_scr_mean = medium_text_font.render(str(round(stat.mean(k_scr_li), 2)), True, (255, 255, 255))
+            k_scr_mean = medium_text_font.render(str(round(stat.mean(k_scr_li), 2))if len(k_pts_li) > 0 else "/", True, (255, 255, 255))
             win.blit(k_scr_mean, (800 if _lang == "fr" else 840, 290))
-            s_scr_mean = medium_text_font.render(str(round(stat.mean(s_scr_li), 2)), True, (255, 255, 255))
+            s_scr_mean = medium_text_font.render(str(round(stat.mean(s_scr_li), 2))if len(s_pts_li) > 0 else "/", True, (255, 255, 255))
             win.blit(s_scr_mean, (800, 390))
             # dates des parties à completer + debuger quand fichier vide
-            with open("time_record") as file:
-                game_time = file.readlines()
-                file.close()
+            try:
+                with open("time_record") as file:
+                    game_time = file.readlines()
+                    file.close()
+            except FileNotFoundError:
+                with open("time_record", "w") as file:
+                    file.close()
+                with open("time_record") as file:
+                    game_time = file.readlines()
+                    file.close()
             game_time = [i[:-1].split(",") for i in game_time]
             game_time.sort()
-            first_game = small_text_font.render("{}/{}/{} {} {}h{}m{}s".format(game_time[0][0], game_time[0][1], game_time[0][2], "à" if _lang == "fr" else "at", game_time[0][3], game_time[0][4], game_time[0][5]), True, (255, 255, 255))
+            first_game = small_text_font.render("{}/{}/{} {} {}h{}m{}s".format(game_time[0][0], game_time[0][1], game_time[0][2], "à" if _lang == "fr" else "at", game_time[0][3], game_time[0][4], game_time[0][5]) if len(game_time) > 0 else ("Jouez pour compléter" if _lang == "fr" else "Play to complete"), True, (255, 255, 255))
             win.blit(first_game, (370, 500))
             last_game = small_text_font.render(
-                "{}/{}/{} {} {}h{}m{}s".format(game_time[-1][0], game_time[-1][1], game_time[-1][2], "à" if _lang == "fr" else "at", game_time[-1][3], game_time[-1][4], game_time[-1][5]), True, (255, 255, 255))
+                "{}/{}/{} {} {}h{}m{}s".format(game_time[-1][0], game_time[-1][1], game_time[-1][2], "à" if _lang == "fr" else "at", game_time[-1][3], game_time[-1][4], game_time[-1][5])if len(game_time) > 0 else ("Jouez pour compléter" if _lang == "fr" else "Play to complete"), True, (255, 255, 255))
             win.blit(last_game, (670, 500))
-
 
 
 
