@@ -30,6 +30,7 @@ win = pygame.display.set_mode((1000, 600))
 # images importation
 importation = lambda image_name: pygame.image.load(str(image_name)).convert_alpha()
 conv_icone_size = lambda image: pygame.transform.scale(image, (50, 50))
+conv_param_size = lambda image: pygame.transform.scale(image, (75, 75))
 
 bg_main_menu_img = importation("src/menu_bg.png")
 tr_img = conv_icone_size(importation("src/Trophy.png"))
@@ -37,9 +38,14 @@ stat_img = conv_icone_size(importation("src/Statistics.png"))
 lang_img = conv_icone_size(importation("src/Language.png"))
 settings_img = conv_icone_size(importation("src/Settings.png"))
 general_bg = importation("src/bg.png")
-fr_img = pygame.transform.scale(importation("src/French_flag.png"), (75, 75))
-en_img = pygame.transform.scale(importation("src/US_flag.png"), (75, 75))
+fr_img = conv_param_size(importation("src/French_flag.png"))
+en_img = conv_param_size(importation("src/US_flag.png"))
 chrono_img = importation("src/chrono.png")
+sound_img = conv_param_size(importation("src/Sound.png"))
+no_sound_img = conv_param_size(importation("src/No_sound.png"))
+music_img = conv_param_size(importation("src/music.png"))
+on_img = conv_param_size(importation("src/ON.png"))
+off_img = conv_param_size(importation("src/OFF.png"))
 
 if lang == "fr":
     play_button = importation("src/fr-buttons/play_button.png")
@@ -164,7 +170,8 @@ tot_pts = []
 
 # animation count
 
-a=0
+a = 0
+
 
 # calculating points
 
@@ -196,15 +203,17 @@ def points(li, mode, tps=None):
     tot = round(tot, 1)
     return tot
 
+
 # display the score in the table from a list
 
 def score_display(li, column_abs):
-    for i in range(0,3):
+    for i in range(0, 3):
         try:
             s = medium_text_font.render(li[i][:-1], True, (255, 255, 255))
         except IndexError:
             s = text_font.render("          /", True, (255, 255, 255))
-        win.blit(s, (column_abs, 210+i*125))
+        win.blit(s, (column_abs, 210 + i * 125))
+
 
 # open stats files and create them if they don't exist yet
 
@@ -227,9 +236,9 @@ user_view = 1
 pygame.mixer.music.play(-1)
 while True:
     if not play_music:
-        pygame.mixer.music.pause
-    else:
-        pygame.mixer.music.unpause
+        pygame.mixer.music.pause()
+    elif play_music:
+        pygame.mixer.music.unpause()
     if a < 1:
         bg_rect = pygame.Rect(0, 0, 1000, 600)
         pygame.draw.rect(win, (0, 0, 0), bg_rect)
@@ -248,7 +257,7 @@ while True:
                 os.sys.exit(0)
 
             else:
-                if user_view in [2, 6, 7, 8]:
+                if user_view in [2, 6, 7, 8, 9]:
                     user_view = 1
                 elif user_view in [3]:
                     user_view = 2
@@ -266,23 +275,26 @@ while True:
             settings_b = win.blit(settings_img, (300, 22))
             play_b = win.blit(play_button, (300, 250))
 
-
             if play_b.collidepoint(
                     pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
                 user_view = 2
-                sound.play()
+                if play_sound: sound.play()
             elif lang_b.collidepoint(
                     pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
                 user_view = 6
-                sound.play()
+                if play_sound: sound.play()
             elif scores_b.collidepoint(
                     pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
                 user_view = 7
-                sound.play()
+                if play_sound: sound.play()
             elif stat_b.collidepoint(
                     pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
                 user_view = 8
-                sound.play()
+                if play_sound: sound.play()
+            elif settings_b.collidepoint(
+                    pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
+                user_view = 9
+                if play_sound: sound.play()
 
         # gamemode choice
         elif user_view == 2:
@@ -294,19 +306,20 @@ while True:
 
             if normal_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
                 user_view = 3
-                sound.play()
+                if play_sound: sound.play()
             elif knowledge_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
                 user_view = 4
-                sound.play()
+                if play_sound: sound.play()
             elif speed_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
                 user_view = 5
-                sound.play()
+                if play_sound: sound.play()
 
         # normal mode
         elif user_view == 3:
             with open("time_record", "a+") as file:
                 date = datetime.datetime.now()
-                file.write("{},{},{},{},{},{}\n".format(date.year, date.month, date.day, date.hour, date.minute, date.second))
+                file.write(
+                    "{},{},{},{},{},{}\n".format(date.year, date.month, date.day, date.hour, date.minute, date.second))
             file.close()
             Ingame_score = 0
             for j in range(len(questions_answer)):
@@ -452,12 +465,14 @@ while True:
                 file = open('lang.txt', 'w')
                 file.write("fr")
                 file.close()
+                if play_sound: sound.play()
             elif (en_b.collidepoint(pygame.mouse.get_pos()) or en_text.collidepoint(
                     pygame.mouse.get_pos())) and i.type == pygame.MOUSEBUTTONDOWN:
                 lang = "en"
                 file = open('lang.txt', 'w')
                 file.write("en")
                 file.close()
+                if play_sound: sound.play()
 
             if lang == "fr":
                 highlight = pygame.Rect(290, 140, 330, 100)
@@ -495,7 +510,8 @@ while True:
             for i in [k_score_li, n_score_li, s_score_li]:
                 i.sort()
                 i.reverse()
-            tot_nb_game = medium_text_font.render(str(len(k_score_li) + len(n_score_li) + len(s_score_li)), True, (255, 255, 255))
+            tot_nb_game = medium_text_font.render(str(len(k_score_li) + len(n_score_li) + len(s_score_li)), True,
+                                                  (255, 255, 255))
             win.blit(tot_nb_game, (200, 90))
             nb_k_game = medium_text_font.render(str(len(k_score_li)), True, (255, 255, 255))
             win.blit(nb_k_game, (200, 190))
@@ -504,42 +520,76 @@ while True:
             nb_s_game = medium_text_font.render(str(len(s_score_li)), True, (255, 255, 255))
             win.blit(nb_s_game, (200, 390))
             if _lang == "fr":
-                fav_gamemode = medium_text_font.render("Culture" if len(k_score_li) > len(n_score_li) and len(k_score_li) > len(s_score_li) else ("Normal" if len(n_score_li) > len(s_score_li) else "Vitesse"), True, (255, 255, 255))
+                fav_gamemode = medium_text_font.render(
+                    "Culture" if len(k_score_li) > len(n_score_li) and len(k_score_li) > len(s_score_li) else (
+                        "Normal" if len(n_score_li) > len(s_score_li) else "Vitesse"), True, (255, 255, 255))
             elif _lang == "en":
-                fav_gamemode = medium_text_font.render("Knowledge" if len(k_score_li) > len(n_score_li) and len(k_score_li) > len(s_score_li) else ("Normal" if len(n_score_li) > len(s_score_li) else "Speed"), True, (255, 255, 255))
+                fav_gamemode = medium_text_font.render(
+                    "Knowledge" if len(k_score_li) > len(n_score_li) and len(k_score_li) > len(s_score_li) else (
+                        "Normal" if len(n_score_li) > len(s_score_li) else "Speed"), True, (255, 255, 255))
             win.blit(fav_gamemode, (100, 490))
             k_pts_li = [float(i.split(" ")[0]) for i in k_score_li]
             n_pts_li = [float(i.split(" ")[0]) for i in n_score_li]
             s_pts_li = [float(i.split(" ")[0]) for i in s_score_li]
-            pts_mean = medium_text_font.render(str(round(stat.mean(k_pts_li + n_pts_li + s_pts_li), 2)) if len(k_pts_li + n_pts_li + s_pts_li) > 0 else "/", True, (255, 255, 255))
+            pts_mean = medium_text_font.render(str(round(stat.mean(k_pts_li + n_pts_li + s_pts_li), 2)) if len(
+                k_pts_li + n_pts_li + s_pts_li) > 0 else "/", True, (255, 255, 255))
             win.blit(pts_mean, (440, 90))
-            n_pts_mean = medium_text_font.render(str(round(stat.mean(n_pts_li), 2))if len(n_pts_li) > 0 else "/", True, (255, 255, 255))
+            n_pts_mean = medium_text_font.render(str(round(stat.mean(n_pts_li), 2)) if len(n_pts_li) > 0 else "/", True,
+                                                 (255, 255, 255))
             win.blit(n_pts_mean, (500, 190))
-            k_pts_mean = medium_text_font.render(str(round(stat.mean(k_pts_li), 2))if len(k_pts_li) > 0 else "/", True, (255, 255, 255))
+            k_pts_mean = medium_text_font.render(str(round(stat.mean(k_pts_li), 2)) if len(k_pts_li) > 0 else "/", True,
+                                                 (255, 255, 255))
             win.blit(k_pts_mean, (500 if _lang == "fr" else 560, 290))
-            s_pts_mean = medium_text_font.render(str(round(stat.mean(s_pts_li), 2))if len(s_pts_li) > 0 else "/", True, (255, 255, 255))
+            s_pts_mean = medium_text_font.render(str(round(stat.mean(s_pts_li), 2)) if len(s_pts_li) > 0 else "/", True,
+                                                 (255, 255, 255))
             win.blit(s_pts_mean, (500, 390))
             k_scr_li = [float((i.split(",")[1]).split("/")[1]) for i in k_score_li]
             n_scr_li = [float((i.split(",")[1]).split("/")[1]) for i in n_score_li]
             s_scr_li = [float((i.split(",")[1]).split("/")[1]) for i in s_score_li]
-            scr_mean = medium_text_font.render(str(round(stat.mean(k_scr_li + n_scr_li + s_scr_li), 2))if len(k_pts_li + n_pts_li + s_pts_li) > 0 else "/", True,(255, 255, 255))
+            scr_mean = medium_text_font.render(str(round(stat.mean(k_scr_li + n_scr_li + s_scr_li), 2)) if len(
+                k_pts_li + n_pts_li + s_pts_li) > 0 else "/", True, (255, 255, 255))
             win.blit(scr_mean, (740, 90))
-            n_scr_mean = medium_text_font.render(str(round(stat.mean(n_scr_li), 2))if len(n_pts_li) > 0 else "/", True, (255, 255, 255))
+            n_scr_mean = medium_text_font.render(str(round(stat.mean(n_scr_li), 2)) if len(n_pts_li) > 0 else "/", True,
+                                                 (255, 255, 255))
             win.blit(n_scr_mean, (800, 190))
-            k_scr_mean = medium_text_font.render(str(round(stat.mean(k_scr_li), 2))if len(k_pts_li) > 0 else "/", True, (255, 255, 255))
+            k_scr_mean = medium_text_font.render(str(round(stat.mean(k_scr_li), 2)) if len(k_pts_li) > 0 else "/", True,
+                                                 (255, 255, 255))
             win.blit(k_scr_mean, (800 if _lang == "fr" else 840, 290))
-            s_scr_mean = medium_text_font.render(str(round(stat.mean(s_scr_li), 2))if len(s_pts_li) > 0 else "/", True, (255, 255, 255))
+            s_scr_mean = medium_text_font.render(str(round(stat.mean(s_scr_li), 2)) if len(s_pts_li) > 0 else "/", True,
+                                                 (255, 255, 255))
             win.blit(s_scr_mean, (800, 390))
             # dates des parties à completer + debuger quand fichier vide
             game_time = import_stat_file("time_record")
             game_time = [i[:-1].split(",") for i in game_time]
             game_time.sort()
-            first_game = small_text_font.render("{}/{}/{} {} {}h{}m{}s".format(game_time[0][0], game_time[0][1], game_time[0][2], "à" if _lang == "fr" else "at", game_time[0][3], game_time[0][4], game_time[0][5]) if len(game_time) > 0 else ("Jouez pour compléter" if _lang == "fr" else "Play to complete"), True, (255, 255, 255))
+            first_game = small_text_font.render(
+                "{}/{}/{} {} {}h{}m{}s".format(game_time[0][0], game_time[0][1], game_time[0][2],
+                                               "à" if _lang == "fr" else "at", game_time[0][3], game_time[0][4],
+                                               game_time[0][5]) if len(game_time) > 0 else (
+                    "Jouez pour compléter" if _lang == "fr" else "Play to complete"), True, (255, 255, 255))
             win.blit(first_game, (370, 500))
             last_game = small_text_font.render(
-                "{}/{}/{} {} {}h{}m{}s".format(game_time[-1][0], game_time[-1][1], game_time[-1][2], "à" if _lang == "fr" else "at", game_time[-1][3], game_time[-1][4], game_time[-1][5])if len(game_time) > 0 else ("Jouez pour compléter" if _lang == "fr" else "Play to complete"), True, (255, 255, 255))
+                "{}/{}/{} {} {}h{}m{}s".format(game_time[-1][0], game_time[-1][1], game_time[-1][2],
+                                               "à" if _lang == "fr" else "at", game_time[-1][3], game_time[-1][4],
+                                               game_time[-1][5]) if len(game_time) > 0 else (
+                    "Jouez pour compléter" if _lang == "fr" else "Play to complete"), True, (255, 255, 255))
             win.blit(last_game, (670, 500))
 
+        # Settings
+        elif user_view == 9:
+            win.blit(general_bg, (0, 0))
 
+            set_sound_b = win.blit(sound_img if play_sound == True else no_sound_img, (300, 150))
+            sound_switch = win.blit(on_img if play_sound == True else off_img, (400, 150))
+            if (set_sound_b.collidepoint(pygame.mouse.get_pos()) or sound_switch.collidepoint(
+                    pygame.mouse.get_pos())) and i.type == pygame.MOUSEBUTTONDOWN:
+                play_sound = False if play_sound == True else True
+                if play_sound: sound.play()
+            set_music_b = win.blit(music_img, (300, 300))
+            music_switch = win.blit(on_img if play_music == True else off_img, (400, 300))
+            if (set_music_b.collidepoint(pygame.mouse.get_pos()) or music_switch.collidepoint(
+                    pygame.mouse.get_pos())) and i.type == pygame.MOUSEBUTTONDOWN:
+                play_music = (False if play_music == True else True)
+                if play_sound: sound.play()
 
     pygame.display.flip()

@@ -5,3 +5,8 @@ French_flag.png : https://www.flaticon.com/authors/freepik
 US_flag.png : https://www.flaticon.com/authors/freepik
 Statistics.png : https://www.flaticon.com/authors/fjstudio
 chrono.png : https://www.flaticon.com/authors/fjstudio
+Sound.png : https://www.flaticon.com/authors/pixel-perfect
+No_sound.png : https://www.flaticon.com/authors/pixel-perfect
+Music.png : https://www.flaticon.com/authors/pixel-perfect
+ON.png : https://www.flaticon.com/authors/pixel-perfect
+OFF.png : https://www.flaticon.com/authors/pixel-perfect
