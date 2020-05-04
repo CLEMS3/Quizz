@@ -59,6 +59,14 @@ else:
 
 # end of images importation
 
+# music and sound importation
+
+play_music = True
+play_sound = True
+pygame.mixer.init()
+music = pygame.mixer.music.load("src/sound/rainy-sun.ogg")
+sound = pygame.mixer.Sound("src/sound/clic.ogg")
+
 # csv file importation / creating question list
 
 file = open('quizz_fr.csv' if lang == "fr" else 'quizz_en.csv', encoding='utf-8')
@@ -158,6 +166,7 @@ tot_pts = []
 
 a=0
 
+# calculating points
 
 def points(li, mode, tps=None):
     coef = 1
@@ -187,6 +196,8 @@ def points(li, mode, tps=None):
     tot = round(tot, 1)
     return tot
 
+# display the score in the table from a list
+
 def score_display(li, column_abs):
     for i in range(0,3):
         try:
@@ -195,11 +206,30 @@ def score_display(li, column_abs):
             s = text_font.render("          /", True, (255, 255, 255))
         win.blit(s, (column_abs, 210+i*125))
 
+# open stats files and create them if they don't exist yet
+
+def import_stat_file(file_):
+    try:
+        with open(str(file_)) as file:
+            return file.readlines()
+            file.close()
+    except FileNotFoundError:
+        with open(str(file_), "w") as file:
+            file.close()
+        with open("k_score.txt") as file:
+            return file.readlines()
+            file.close()
+
 
 # main loop
-user_view = 1
 
+user_view = 1
+pygame.mixer.music.play(-1)
 while True:
+    if not play_music:
+        pygame.mixer.music.pause
+    else:
+        pygame.mixer.music.unpause
     if a < 1:
         bg_rect = pygame.Rect(0, 0, 1000, 600)
         pygame.draw.rect(win, (0, 0, 0), bg_rect)
@@ -240,15 +270,19 @@ while True:
             if play_b.collidepoint(
                     pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
                 user_view = 2
+                sound.play()
             elif lang_b.collidepoint(
                     pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
                 user_view = 6
+                sound.play()
             elif scores_b.collidepoint(
                     pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
                 user_view = 7
+                sound.play()
             elif stat_b.collidepoint(
                     pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
                 user_view = 8
+                sound.play()
 
         # gamemode choice
         elif user_view == 2:
@@ -260,10 +294,13 @@ while True:
 
             if normal_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
                 user_view = 3
+                sound.play()
             elif knowledge_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
                 user_view = 4
+                sound.play()
             elif speed_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
                 user_view = 5
+                sound.play()
 
         # normal mode
         elif user_view == 3:
@@ -451,36 +488,10 @@ while True:
         # Stats
         elif user_view == 8:
             background = win.blit(stat_bg, (0, 0))
-            try:
-                with open("k_score.txt") as file:
-                    k_score_li = file.readlines()
-                    file.close()
-            except FileNotFoundError:
-                with open("k_score.txt", "w") as file:
-                    file.close()
-                with open("k_score.txt") as file:
-                    k_score_li = file.readlines()
-                    file.close()
-            try:
-                with open("n_score.txt") as file:
-                    n_score_li = file.readlines()
-                    file.close()
-            except FileNotFoundError:
-                with open("n_score.txt", "w") as file:
-                    file.close()
-                with open("n_score.txt") as file:
-                    n_score_li = file.readlines()
-                    file.close()
-            try:
-                with open("s_score.txt") as file:
-                    s_score_li = file.readlines()
-                    file.close()
-            except FileNotFoundError:
-                with open("s_score.txt", "w") as file:
-                    file.close()
-                with open("s_score.txt") as file:
-                    s_score_li = file.readlines()
-                    file.close()
+            k_score_li = import_stat_file("k_score.txt")
+            n_score_li = import_stat_file("n_score.txt")
+            s_score_li = import_stat_file("s_score.txt")
+
             for i in [k_score_li, n_score_li, s_score_li]:
                 i.sort()
                 i.reverse()
@@ -520,16 +531,7 @@ while True:
             s_scr_mean = medium_text_font.render(str(round(stat.mean(s_scr_li), 2))if len(s_pts_li) > 0 else "/", True, (255, 255, 255))
             win.blit(s_scr_mean, (800, 390))
             # dates des parties à completer + debuger quand fichier vide
-            try:
-                with open("time_record") as file:
-                    game_time = file.readlines()
-                    file.close()
-            except FileNotFoundError:
-                with open("time_record", "w") as file:
-                    file.close()
-                with open("time_record") as file:
-                    game_time = file.readlines()
-                    file.close()
+            game_time = import_stat_file("time_record")
             game_time = [i[:-1].split(",") for i in game_time]
             game_time.sort()
             first_game = small_text_font.render("{}/{}/{} {} {}h{}m{}s".format(game_time[0][0], game_time[0][1], game_time[0][2], "à" if _lang == "fr" else "at", game_time[0][3], game_time[0][4], game_time[0][5]) if len(game_time) > 0 else ("Jouez pour compléter" if _lang == "fr" else "Play to complete"), True, (255, 255, 255))
