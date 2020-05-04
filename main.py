@@ -54,6 +54,10 @@ if lang == "fr":
     speed_button = importation("src/fr-buttons/speed_button.png")
     score_bg = importation("src/fr-buttons/scores_bg.png")
     stat_bg = importation("src/fr-buttons/stats_bg.png")
+    play_button_hoover = importation("src/fr-buttons/play_button_hoover.png")
+    knowledge_button_hoover = importation("src/fr-buttons/knowledge_button_hoover.png")
+    normal_button_hoover = importation("src/fr-buttons/normal_button_hoover.png")
+    speed_button_hoover = importation("src/fr-buttons/speed_button_hoover.png")
 
 else:
     play_button = importation("src/en-buttons/play_button.png")
@@ -62,6 +66,10 @@ else:
     speed_button = importation("src/en-buttons/speed_button.png")
     score_bg = importation("src/en-buttons/scores_bg.png")
     stat_bg = importation("src/en-buttons/stats_bg.png")
+    play_button_hoover = importation("src/en-buttons/play_button_hoover.png")
+    knowledge_button_hoover = importation("src/en-buttons/knowledge_button_hoover.png")
+    normal_button_hoover = importation("src/en-buttons/normal_button_hoover.png")
+    speed_button_hoover = importation("src/en-buttons/speed_button_hoover.png")
 
 # end of images importation
 
@@ -275,24 +283,25 @@ while True:
             settings_b = win.blit(settings_img, (300, 22))
             play_b = win.blit(play_button, (300, 250))
 
-            if play_b.collidepoint(
-                    pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
-                user_view = 2
-                if play_sound: sound.play()
+            if play_b.collidepoint(pygame.mouse.get_pos()):
+                play_b = win.blit(play_button_hoover, (300, 250))
+                if i.type == pygame.MOUSEBUTTONDOWN:
+                    user_view = 2
+                    if play_sound: sound.play()
             elif lang_b.collidepoint(
-                    pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
+                    pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
                 user_view = 6
                 if play_sound: sound.play()
             elif scores_b.collidepoint(
-                    pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
+                    pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
                 user_view = 7
                 if play_sound: sound.play()
             elif stat_b.collidepoint(
-                    pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
+                    pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
                 user_view = 8
                 if play_sound: sound.play()
             elif settings_b.collidepoint(
-                    pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:  # ameliorable avec un effet de hoover
+                    pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
                 user_view = 9
                 if play_sound: sound.play()
 
@@ -304,15 +313,21 @@ while True:
             normal_b = win.blit(normal_button, (300, 250))
             speed_b = win.blit(speed_button, (300, 400))
 
-            if normal_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
-                user_view = 3
-                if play_sound: sound.play()
-            elif knowledge_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
-                user_view = 4
-                if play_sound: sound.play()
-            elif speed_b.collidepoint(pygame.mouse.get_pos()) and i.type == pygame.MOUSEBUTTONDOWN:
-                user_view = 5
-                if play_sound: sound.play()
+            if normal_b.collidepoint(pygame.mouse.get_pos()):
+                normal_b = win.blit(normal_button_hoover, (300, 250))
+                if i.type == pygame.MOUSEBUTTONDOWN:
+                    user_view = 3
+                    if play_sound: sound.play()
+            if knowledge_b.collidepoint(pygame.mouse.get_pos()):
+                knowledge_b = win.blit(knowledge_button_hoover, (300, 100))
+                if i.type == pygame.MOUSEBUTTONDOWN:
+                    user_view = 4
+                    if play_sound: sound.play()
+            if speed_b.collidepoint(pygame.mouse.get_pos()):
+                speed_b = win.blit(speed_button_hoover, (300, 400))
+                if i.type == pygame.MOUSEBUTTONDOWN:
+                    user_view = 5
+                    if play_sound: sound.play()
 
         # normal mode
         elif user_view == 3:
