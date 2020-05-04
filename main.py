@@ -543,9 +543,10 @@ while True:
             s_pts_mean = medium_text_font.render(str(round(stat.mean(s_pts_li), 2)) if len(s_pts_li) > 0 else "/", True,
                                                  (255, 255, 255))
             win.blit(s_pts_mean, (500, 390))
-            k_scr_li = [float((i.split(",")[1]).split("/")[1]) for i in k_score_li]
-            n_scr_li = [float((i.split(",")[1]).split("/")[1]) for i in n_score_li]
-            s_scr_li = [float((i.split(",")[1]).split("/")[1]) for i in s_score_li]
+            k_scr_li = [float((i.split(",")[1]).split("/")[0]) for i in k_score_li]
+            print(k_scr_li)
+            n_scr_li = [float((i.split(",")[1]).split("/")[0]) for i in n_score_li]
+            s_scr_li = [float((i.split(",")[1]).split("/")[0]) for i in s_score_li]
             scr_mean = medium_text_font.render(str(round(stat.mean(k_scr_li + n_scr_li + s_scr_li), 2)) if len(
                 k_pts_li + n_pts_li + s_pts_li) > 0 else "/", True, (255, 255, 255))
             win.blit(scr_mean, (740, 90))
