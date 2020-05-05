@@ -1,4 +1,4 @@
-# Clément Chapard - QuizzNsi
+# Clément Chapard - QuizzNsi - Python 3.7
 # main file of the project
 
 # language definition
@@ -74,9 +74,12 @@ else:
 # end of images importation
 
 # music and sound importation
-
-play_music = True
-play_sound = True
+file = open('Settings.txt', 'r')
+sound_data = str(file.read()).split("/")
+print(sound_data)
+file.close()
+play_music = True if sound_data[0] == "1" else False
+play_sound = True if sound_data[1] == "1" else False
 pygame.mixer.init()
 music = pygame.mixer.music.load("src/sound/rainy-sun.ogg")
 sound = pygame.mixer.Sound("src/sound/clic.ogg")
@@ -173,15 +176,14 @@ def input_box(text, mode=None, t0=None):
     return text
 
 
-# calculating points
-tot_pts = []
-
 # animation count
 
 a = 0
 
 
 # calculating points
+
+tot_pts = []
 
 def points(li, mode, tps=None):
     coef = 1
@@ -193,7 +195,8 @@ def points(li, mode, tps=None):
             coef += 0.1
             score += 1
         else:
-            coef -= 0.1
+            if coef > 0 :
+                coef -= 0.1
     if mode == 5:
         tot *= (tps / (len(questions_answer) * 2.5))
         with open("s_score.txt", "a+") as file:
@@ -238,15 +241,9 @@ def import_stat_file(file_):
             file.close()
 
 
-# main loop
+# Intro
 
-user_view = 1
-pygame.mixer.music.play(-1)
-while True:
-    if not play_music:
-        pygame.mixer.music.pause()
-    elif play_music:
-        pygame.mixer.music.unpause()
+for i in range(1001):
     if a < 1:
         bg_rect = pygame.Rect(0, 0, 1000, 600)
         pygame.draw.rect(win, (0, 0, 0), bg_rect)
@@ -257,6 +254,20 @@ while True:
         pygame.draw.line(win, (255, 255, 255), (500, 600), (0 * a, 100 * a), 10)
         pygame.draw.line(win, (255, 255, 255), (500, 600), (1000 * a, 100 * a), 10)
         a += 0.001
+    else:
+        time.sleep(3)
+    pygame.display.flip()
+
+# main loop
+
+user_view = 1
+pygame.mixer.music.play(-1)
+while True:
+    if not play_music:
+        pygame.mixer.music.pause()
+    elif play_music:
+        pygame.mixer.music.unpause()
+
     for i in pygame.event.get():
         if (i.type == pygame.KEYDOWN and i.key == pygame.K_ESCAPE):
             if user_view == 1:
@@ -499,15 +510,9 @@ while True:
         # Score
         elif user_view == 7:
             background = win.blit(score_bg, (0, 0))
-            with open("k_score.txt") as file:
-                k_score_li = file.readlines()
-                file.close()
-            with open("n_score.txt") as file:
-                n_score_li = file.readlines()
-                file.close()
-            with open("s_score.txt") as file:
-                s_score_li = file.readlines()
-                file.close()
+            k_score_li = import_stat_file("k_score.txt")
+            n_score_li = import_stat_file("n_score.txt")
+            s_score_li = import_stat_file("s_score.txt")
             for i in [k_score_li, n_score_li, s_score_li]:
                 i.sort()
                 i.reverse()
@@ -601,11 +606,17 @@ while True:
                     pygame.mouse.get_pos())) and i.type == pygame.MOUSEBUTTONDOWN:
                 play_sound = False if play_sound == True else True
                 if play_sound: sound.play()
+                file = open('Settings.txt', 'w')
+                file.write("{}/{}".format(play_music, play_sound))
+                file.close()
             set_music_b = win.blit(music_img, (300, 300))
             music_switch = win.blit(on_img if play_music == True else off_img, (400, 300))
             if (set_music_b.collidepoint(pygame.mouse.get_pos()) or music_switch.collidepoint(
                     pygame.mouse.get_pos())) and i.type == pygame.MOUSEBUTTONDOWN:
                 play_music = (False if play_music == True else True)
                 if play_sound: sound.play()
+                file = open('Settings.txt', 'w')
+                file.write("{}/{}".format(play_music, play_sound))
+                file.close()
 
     pygame.display.flip()

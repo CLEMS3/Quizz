@@ -1,4 +1,4 @@
-# Clément Chapard - QuizzNsi
+# Clément Chapard - QuizzNsi - Python 3.7
 # This file contains the Soundex algorithm
 
 def soundex(word):
