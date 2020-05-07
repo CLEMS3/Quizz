@@ -16,6 +16,7 @@ import random
 import time
 import statistics as stat
 import datetime
+import random
 
 if lang == "fr":
     from Soundex_fr import *
@@ -78,8 +79,8 @@ file = open('Settings.txt', 'r')
 sound_data = str(file.read()).split("/")
 print(sound_data)
 file.close()
-play_music = True if sound_data[0] == "1" else False
-play_sound = True if sound_data[1] == "1" else False
+play_music = True if sound_data[0] == "True" else False
+play_sound = True if sound_data[1] == "True" else False
 pygame.mixer.init()
 music = pygame.mixer.music.load("src/sound/rainy-sun.ogg")
 sound = pygame.mixer.Sound("src/sound/clic.ogg")
@@ -109,6 +110,7 @@ pygame.display.set_caption("E-quizz")
 text_font = pygame.font.Font("ARLRDBD.TTF", 50)
 small_text_font = pygame.font.Font("ARLRDBD.TTF", 25)
 medium_text_font = pygame.font.Font("ARLRDBD.TTF", 40)
+huge_text_font = pygame.font.Font("ARLRDBD.TTF", 100)
 
 
 # text formatting
@@ -255,7 +257,7 @@ for i in range(1001):
         pygame.draw.line(win, (255, 255, 255), (500, 600), (1000 * a, 100 * a), 10)
         a += 0.001
     else:
-        time.sleep(3)
+        time.sleep(2)
     pygame.display.flip()
 
 # main loop
@@ -276,7 +278,7 @@ while True:
                 os.sys.exit(0)
 
             else:
-                if user_view in [2, 6, 7, 8, 9]:
+                if user_view in [2, 6, 7, 8, 9, 10]:
                     user_view = 1
                 elif user_view in [3]:
                     user_view = 2
@@ -618,5 +620,14 @@ while True:
                 file = open('Settings.txt', 'w')
                 file.write("{}/{}".format(play_music, play_sound))
                 file.close()
+
+        # Easter Egg
+        if (i.type == pygame.KEYDOWN and i.key == pygame.K_F1):
+            user_view = 10
+        elif user_view == 10:
+            win.blit(general_bg, (0, 0))
+            easter_egg_text = huge_text_font.render("Bonjour" if _lang == "fr" else "Hello", True, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
+            win.blit(easter_egg_text, (random.randint(0, 1000), random.randint(0, 600)))
+
 
     pygame.display.flip()
