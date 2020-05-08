@@ -47,6 +47,7 @@ no_sound_img = conv_param_size(importation("src/No_sound.png"))
 music_img = conv_param_size(importation("src/music.png"))
 on_img = conv_param_size(importation("src/ON.png"))
 off_img = conv_param_size(importation("src/OFF.png"))
+icon = importation("src/icon.png")
 
 if lang == "fr":
     play_button = importation("src/fr-buttons/play_button.png")
@@ -77,7 +78,6 @@ else:
 # music and sound importation
 file = open('Settings.txt', 'r')
 sound_data = str(file.read()).split("/")
-print(sound_data)
 file.close()
 play_music = True if sound_data[0] == "True" else False
 play_sound = True if sound_data[1] == "True" else False
@@ -105,6 +105,7 @@ for i in range(len(knowledge_data)):
 # window setting
 
 pygame.display.set_caption("E-quizz")
+pygame.display.set_icon(icon)
 
 # font setting
 text_font = pygame.font.Font("ARLRDBD.TTF", 50)
@@ -155,16 +156,15 @@ def input_box(text, mode=None, t0=None):
                 elif len(text) < 12:
                     text += event.unicode
             elif event.type == pygame.QUIT:
-                print("exit")
                 pygame.quit()
                 os.sys.exit(0)
 
         if mode == 5:
-            if time.time() - t0 >= 5:
+            if time.time() - t0 >= 7:
                 text = ""
                 end_writing = True
             win.blit(chrono_img, (780, 10))
-            remaining_time = round(5 - (time.time() - t0), 2)
+            remaining_time = round(7 - (time.time() - t0), 2)
             txt_time = text_font.render(str(remaining_time), True, (0, 0, 0))
             win.blit(txt_time, (850, 15))
 
@@ -212,9 +212,8 @@ def points(li, mode, tps=None):
         with open("n_score.txt", "a+") as file:
             file.write("{} pts,{}/{}\n".format(round(tot, 2), score, len(questions_answer)))
         file.close()
-    print(mode)
     tot = round(tot, 1)
-    return tot
+    return tot if tot > 0 else 0
 
 
 # display the score in the table from a list
@@ -273,7 +272,6 @@ while True:
     for i in pygame.event.get():
         if (i.type == pygame.KEYDOWN and i.key == pygame.K_ESCAPE):
             if user_view == 1:
-                print("exit")
                 pygame.quit()
                 os.sys.exit(0)
 
@@ -283,7 +281,6 @@ while True:
                 elif user_view in [3]:
                     user_view = 2
         elif i.type == pygame.QUIT:
-            print("exit")
             pygame.quit()
             os.sys.exit(0)
 
@@ -469,7 +466,6 @@ while True:
                     if k.type == pygame.KEYDOWN:
                         showScore = False
 
-            print(tps_tot, "s")
             random.shuffle(questions_answer)
             user_view = 1
 
@@ -515,9 +511,9 @@ while True:
             k_score_li = import_stat_file("k_score.txt")
             n_score_li = import_stat_file("n_score.txt")
             s_score_li = import_stat_file("s_score.txt")
-            for i in [k_score_li, n_score_li, s_score_li]:
-                i.sort()
-                i.reverse()
+            for y in [k_score_li, n_score_li, s_score_li]:
+                y.sort()
+                y.reverse()
             score_display(k_score_li, 65)
             score_display(n_score_li, 365)
             score_display(s_score_li, 665)
@@ -529,9 +525,9 @@ while True:
             n_score_li = import_stat_file("n_score.txt")
             s_score_li = import_stat_file("s_score.txt")
 
-            for i in [k_score_li, n_score_li, s_score_li]:
-                i.sort()
-                i.reverse()
+            for z in [k_score_li, n_score_li, s_score_li]:
+                z.sort()
+                z.reverse()
             tot_nb_game = medium_text_font.render(str(len(k_score_li) + len(n_score_li) + len(s_score_li)), True,
                                                   (255, 255, 255))
             win.blit(tot_nb_game, (200, 90))
@@ -566,7 +562,6 @@ while True:
                                                  (255, 255, 255))
             win.blit(s_pts_mean, (500, 390))
             k_scr_li = [float((i.split(",")[1]).split("/")[0]) for i in k_score_li]
-            print(k_scr_li)
             n_scr_li = [float((i.split(",")[1]).split("/")[0]) for i in n_score_li]
             s_scr_li = [float((i.split(",")[1]).split("/")[0]) for i in s_score_li]
             scr_mean = medium_text_font.render(str(round(stat.mean(k_scr_li + n_scr_li + s_scr_li), 2)) if len(
