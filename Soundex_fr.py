@@ -3,14 +3,14 @@
 
 def soundex(word):
     word = word.upper()
+    word_li__ = [i for i in word if i not in [" "]]
     word_li = [i for i in word if i not in [" ", "H", "W"]]
     word_li_ = []
     count = 0
     for i in word_li:
-        if i != word_li[count-1] or count==0:
+        if i != word_li[count - 1] or count == 0:
             word_li_.append(i)
         count += 1
-
 
     word_li_2 = []
     for i in range(len(word_li_)):
@@ -40,8 +40,12 @@ def soundex(word):
                 word_li_2[c] = "9"
         c += 1
 
+    if len(word_li_2) > 4:
+        word_li_2 = word_li_2[:4]
+
     while len(word_li_2) < 4:
         word_li_2.append("0")
 
-    return word_li_2
+    word_li_2[0] = word_li__[0]
 
+    return word_li_2
