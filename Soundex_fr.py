@@ -46,6 +46,6 @@ def soundex(word):
     while len(word_li_2) < 4:
         word_li_2.append("0")
 
-    word_li_2[0] = word_li__[0]
+    word_li_2[0] = word_li__[0] if len(word_li__) > 0 else 0
 
     return word_li_2

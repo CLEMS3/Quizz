@@ -357,8 +357,11 @@ while True:
                 if soundex(text) == soundex(str(questions_answer[j][1])):
                     Ingame_score += 1
                     tot_pts.append(1)
+
                 else:
                     tot_pts.append(0)
+
+                #print("réponse : {}, bonne réponse : {}, validé : {} ".format(text, questions_answer[j][1], "oui" if soundex(text) == soundex(str(questions_answer[j][1])) else "non"))
 
             showScore = True
             pts = points(tot_pts, user_view)
@@ -540,7 +543,8 @@ while True:
             if _lang == "fr":
                 fav_gamemode = medium_text_font.render(
                     "Culture" if len(k_score_li) > len(n_score_li) and len(k_score_li) > len(s_score_li) else (
-                        "Normal" if len(n_score_li) > len(s_score_li) else "Vitesse"), True, (255, 255, 255))
+                        "Normal" if len(n_score_li) > len(s_score_li) else ("Vitesse" if len(s_score_li) > 0 else "/"))
+                    , True, (255, 255, 255))
             elif _lang == "en":
                 fav_gamemode = medium_text_font.render(
                     "Knowledge" if len(k_score_li) > len(n_score_li) and len(k_score_li) > len(s_score_li) else (
@@ -581,13 +585,13 @@ while True:
             game_time = [i[:-1].split(",") for i in game_time]
             game_time.sort()
             first_game = small_text_font.render(
-                "{}/{}/{} {} {}h{}m{}s".format(game_time[0][0], game_time[0][1], game_time[0][2],
+                "{}/{}/{} {} {}h{}m{}s".format(game_time[0][2], game_time[0][1], game_time[0][0],
                                                "à" if _lang == "fr" else "at", game_time[0][3], game_time[0][4],
                                                game_time[0][5]) if len(game_time) > 0 else (
                     "Jouez pour compléter" if _lang == "fr" else "Play to complete"), True, (255, 255, 255))
             win.blit(first_game, (370, 500))
             last_game = small_text_font.render(
-                "{}/{}/{} {} {}h{}m{}s".format(game_time[-1][0], game_time[-1][1], game_time[-1][2],
+                "{}/{}/{} {} {}h{}m{}s".format(game_time[-1][2], game_time[-1][1], game_time[-1][0],
                                                "à" if _lang == "fr" else "at", game_time[-1][3], game_time[-1][4],
                                                game_time[-1][5]) if len(game_time) > 0 else (
                     "Jouez pour compléter" if _lang == "fr" else "Play to complete"), True, (255, 255, 255))
